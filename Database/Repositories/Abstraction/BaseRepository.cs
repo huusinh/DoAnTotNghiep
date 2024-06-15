@@ -59,33 +59,17 @@ namespace QuizzSystem.Database.Repositories.Abstraction
             DbSet.UpdateRange(entities);
         }
 
-        public void Delete(TEntity entity)
+        public void Delete(TKey id)
         {
             if (SoftDeleteEnabled)
             {
-                DbSet.Remove(entity);
+                DbSet.Where(e => (object)e.Id == (object)id)
+                        .ExecuteUpdate(
+                            e => e.SetProperty(x => x.IsDeleted, true));
             }
             else
             {
-                entity.IsDeleted = true;
-                Update(entity);
-            }
-        }
-
-        public void Delete(params TEntity[] entities)
-        {
-            if (SoftDeleteEnabled)
-            {
-                DbSet.RemoveRange(entities);
-            }
-            else
-            {
-                foreach (var entity in entities)
-                {
-                    entity.IsDeleted = true;
-                }
-
-                Update(entities);
+                DbSet.Where(e => (object)e.Id == (object)id).ExecuteDelete();
             }
         }
     }

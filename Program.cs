@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using QuizzSystem.Database;
+using QuizzSystem.Database.Repositories;
 
 namespace QuizzSystem
 {
@@ -41,6 +42,8 @@ namespace QuizzSystem
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<QuizzRepository>();
+            builder.Services.AddScoped<QuestionRepository>();
 
             var app = builder.Build();
 

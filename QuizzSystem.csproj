@@ -18,8 +18,14 @@
 
   <ItemGroup>
     <None Remove="Helpers\" />
+    <None Remove="Requests\" />
+    <None Remove="Requests\Quizz\" />
+    <None Remove="Requests\Question\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="Requests\" />
+    <Folder Include="Requests\Quizz\" />
+    <Folder Include="Requests\Question\" />
   </ItemGroup>
 </Project>

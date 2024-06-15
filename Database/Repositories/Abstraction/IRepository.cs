@@ -27,8 +27,6 @@ namespace QuizzSystem.Database.Repositories.Abstraction
 
         public void Update(params TEntity[] entities);
 
-        public void Delete(TEntity entity);
-
-        public void Delete(params TEntity[] entities);
+        public void Delete(TKey id);
     }
 }
