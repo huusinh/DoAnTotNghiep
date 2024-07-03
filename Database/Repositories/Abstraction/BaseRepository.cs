@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Pagination.EntityFrameworkCore.Extensions;
 using QuizzSystem.Models.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -27,9 +29,11 @@ namespace QuizzSystem.Database.Repositories.Abstraction
             return DbSet.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
         }
 
-        public Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<Pagination<TEntity>> GetAllAsync(int pageIndex, CancellationToken cancellationToken = default)
         {
-            return DbSet.ToListAsync(cancellationToken);
+            var list = await DbSet.ToListAsync(cancellationToken);
+            var total = list.Count;
+            return new Pagination<TEntity>(list, total, pageIndex);
         }
 
         public Task<List<TEntity>> FilterAsync(
@@ -65,12 +69,20 @@ namespace QuizzSystem.Database.Repositories.Abstraction
             {
                 DbSet.Where(e => (object)e.Id == (object)id)
                         .ExecuteUpdate(
-                            e => e.SetProperty(x => x.IsDeleted, true));
+                            e => e.SetProperty(x => x.IsSoftDeleted, true));
             }
             else
             {
                 DbSet.Where(e => (object)e.Id == (object)id).ExecuteDelete();
             }
+        }
+        public int Count()
+        {
+            return DbSet.Count();
+        }
+        public int CreateID()
+        {
+            return Count() + 1;
         }
     }
 }

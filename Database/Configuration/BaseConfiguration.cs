@@ -10,7 +10,7 @@ namespace QuizzSystem.Database.Configuration
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.HasQueryFilter(e => !e.IsDeleted);
+            builder.HasQueryFilter(e => !e.IsSoftDeleted);
         }
     }
 }

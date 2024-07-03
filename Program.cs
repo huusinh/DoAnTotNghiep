@@ -1,11 +1,16 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using QuizzSystem.Database;
 using QuizzSystem.Database.Repositories;
+using QuizzSystem.Models;
+using System.Text;
 
 namespace QuizzSystem
 {
@@ -27,6 +32,28 @@ namespace QuizzSystem
                 options.GroupNameFormat = "'v'V";
                 options.SubstituteApiVersionInUrl = true;
             });
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = false;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    //ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    //alidAudience = builder.Configuration["Jwt:Audience"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
+                };
+            });
 
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
             {
@@ -35,15 +62,18 @@ namespace QuizzSystem
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("Default");
+                var connectionString = builder.Configuration.GetConnectionString("DBConnectionString");
                 options.UseSqlServer(connectionString).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<QuizzRepository>();
             builder.Services.AddScoped<QuestionRepository>();
+            builder.Services.AddScoped<CompetitionRepository>();
+            builder.Services.AddScoped<CompetitionSettingRepository>();
+            builder.Services.AddScoped<CompetitionTeamRepository>();
+            builder.Services.AddScoped<ResultRepository>();
 
             var app = builder.Build();
 

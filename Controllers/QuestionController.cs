@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using QuizzSystem.Controllers.Abstraction;
 using QuizzSystem.Database;
 using QuizzSystem.Database.Repositories;
+using QuizzSystem.Models;
 using QuizzSystem.Requests.Question;
-using QuizzSystem.Requests.Quizz;
 
 namespace QuizzSystem.Controllers
 {
@@ -20,18 +21,29 @@ namespace QuizzSystem.Controllers
 			_dbContext = dbContext;
             _questionRepository = questionRepository;
 		}
-
+        [HttpGet]
+        public async Task<IActionResult> GetAllQuestion(int pageIndex)
+        {
+            try
+            {
+                var result = await _questionRepository.GetAllAsync(pageIndex);
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 		[HttpPost]
 		public IActionResult AddQuestion(CreateQuestion request)
 		{
 			_questionRepository.Add(new Models.Question
 			{
-				QuizzId = request.QuizzId,
-				Description = request.Description
+				Description = request.Description,
 			});
 
 			_dbContext.SaveChanges();
-
+            
 			return Ok();
 		}
 

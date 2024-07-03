@@ -1,4 +1,5 @@
-﻿using QuizzSystem.Models.Common;
+﻿using Pagination.EntityFrameworkCore.Extensions;
+using QuizzSystem.Models.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -13,7 +14,7 @@ namespace QuizzSystem.Database.Repositories.Abstraction
     {
         public ValueTask<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken = default);
 
-        public Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+        public Task<Pagination<TEntity>> GetAllAsync(int pageIndex, CancellationToken cancellationToken = default);
 
         public Task<List<TEntity>> FilterAsync(
             Expression<Func<TEntity, bool>> predicate,
@@ -28,5 +29,7 @@ namespace QuizzSystem.Database.Repositories.Abstraction
         public void Update(params TEntity[] entities);
 
         public void Delete(TKey id);
+        public int Count();
+        public int CreateID();
     }
 }

@@ -1,27 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "/Users/sinhtran/Downloads/QuizzSystem/QuizzSystem.csproj": {}
+    "C:\\Project\\DoAnTotNghiep\\QuizzSystem.csproj": {}
   },
   "projects": {
-    "/Users/sinhtran/Downloads/QuizzSystem/QuizzSystem.csproj": {
+    "C:\\Project\\DoAnTotNghiep\\QuizzSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/sinhtran/Downloads/QuizzSystem/QuizzSystem.csproj",
+        "projectUniqueName": "C:\\Project\\DoAnTotNghiep\\QuizzSystem.csproj",
         "projectName": "QuizzSystem",
-        "projectPath": "/Users/sinhtran/Downloads/QuizzSystem/QuizzSystem.csproj",
-        "packagesPath": "/Users/sinhtran/.nuget/packages/",
-        "outputPath": "/Users/sinhtran/Downloads/QuizzSystem/obj/",
+        "projectPath": "C:\\Project\\DoAnTotNghiep\\QuizzSystem.csproj",
+        "packagesPath": "C:\\Users\\HI\\.nuget\\packages\\",
+        "outputPath": "C:\\Project\\DoAnTotNghiep\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
         "configFilePaths": [
-          "/Users/sinhtran/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\HI\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
-          "/usr/local/share/dotnet/sdk/7.0.307/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,6 +40,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -48,6 +59,14 @@
               "target": "Package",
               "version": "[7.1.0, )"
             },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[7.0.20, )"
@@ -55,6 +74,16 @@
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[7.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Pagination.EntityFrameworkCore.Extensions": {
+              "target": "Package",
+              "version": "[2.5.6, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -80,7 +109,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.307/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204\\RuntimeIdentifierGraph.json"
         }
       }
     }

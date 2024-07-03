@@ -3,7 +3,6 @@
     public class BaseEntity<TId> where TId : struct
     {
         public TId Id { get; set; }
-
-        public bool IsDeleted { get; set; }
+        public bool IsSoftDeleted { get; set; }
     }
 }
