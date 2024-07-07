@@ -17,8 +17,6 @@ namespace QuizzSystem.Database
 
         public DbSet<Result> Results { get; set; }
 
-        public DbSet<CompetitionSetting> CompetitionSettings { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

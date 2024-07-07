@@ -5,9 +5,9 @@ using QuizzSystem.Database;
 using QuizzSystem.Requests.Question;
 using QuizzSystem.Requests.Competition;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using QuizzSystem.Models;
 using System.Threading.Tasks;
 using System;
+using QuizzSystem.Models;
 
 namespace QuizzSystem.Controllers
 {
@@ -15,20 +15,17 @@ namespace QuizzSystem.Controllers
     {
         private readonly AppDbContext _dbContext;
         private readonly CompetitionRepository _competitionRepository;
-        private readonly CompetitionSettingRepository _competitionSettingRepository;
         private readonly CompetitionTeamRepository _competitionTeamRepository;
         private readonly ResultRepository _ResultRepository;
 
         public CompetitionController(
             AppDbContext dbContext,
             CompetitionRepository competitionRepository,
-            CompetitionSettingRepository competitionSettingRepository,
             CompetitionTeamRepository competitionTeamRepository,
             ResultRepository resultRepository)
         {
             _dbContext = dbContext;
             _competitionRepository = competitionRepository;
-            _competitionSettingRepository = competitionSettingRepository;
             _competitionTeamRepository = competitionTeamRepository;
             _ResultRepository = resultRepository;
         }
@@ -37,21 +34,16 @@ namespace QuizzSystem.Controllers
         public IActionResult AddCompetition(CreateCompetition request)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
-            var setting = new Models.CompetitionSetting
-            {
-                ContestTime = request.ContestTime,
-                ContestRule = request.ContestRule,
-                MaxQuestionCount = request.MaxQuestionCount,
-                MaxTeamCount = request.MaxTeamCount,
-            };
-            _competitionSettingRepository.Add(setting);
             _dbContext.SaveChanges();
 
             var competition = new Models.Competition
             {
                 CompetitionName = request.CompetitionName,
                 CreatorId = request.CreatorID,
-                CompetitionSettingId = setting.Id
+                ContestTime = request.ContestTime,
+                ContestRule = request.ContestRule,
+                MaxQuestionCount = request.MaxQuestionCount,
+                MaxTeamCount = request.MaxTeamCount
             };
             _competitionRepository.Add(competition);
             _dbContext.SaveChanges();
@@ -106,17 +98,41 @@ namespace QuizzSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCompetition(int pageIndex)
+        public async Task<IActionResult> GetAllCompetitionInCompleted(int pageIndex)
         {
             try
             {
-                var result = await _competitionRepository.GetPagedDataAsync(pageIndex);
+                var result = await _competitionRepository.GetPagedDataAsync(pageIndex, false);
                 return Ok(result);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
+        }
+
+        [HttpGet("histories")]
+        public async Task<IActionResult> GetAllCompetitionCompleted(int pageIndex)
+        {
+            try
+            {
+                var result = await _competitionRepository.GetPagedDataAsync(pageIndex, true);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpGet("{competitionId:int}")]
+        public async Task<IActionResult> GetCompetitionById(int competitionId)
+        {
+            var result = await _competitionRepository.GetByIdAsync(competitionId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }

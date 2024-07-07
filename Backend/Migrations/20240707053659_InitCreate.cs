@@ -55,25 +55,6 @@ namespace QuizzSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompetitionSettings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    QuestionScore = table.Column<int>(type: "int", nullable: true),
-                    ContestTime = table.Column<int>(type: "int", nullable: true),
-                    ContestRule = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MaxTeamCount = table.Column<int>(type: "int", nullable: true),
-                    MaxQuestionCount = table.Column<int>(type: "int", nullable: true),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: true),
-                    IsSoftDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompetitionSettings", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
@@ -203,6 +184,12 @@ namespace QuizzSystem.Migrations
                     CompetitionName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatorId = table.Column<int>(type: "int", nullable: true),
                     CompetitionSettingId = table.Column<int>(type: "int", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    QuestionScore = table.Column<int>(type: "int", nullable: true),
+                    ContestTime = table.Column<int>(type: "int", nullable: true),
+                    ContestRule = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaxTeamCount = table.Column<int>(type: "int", nullable: true),
+                    MaxQuestionCount = table.Column<int>(type: "int", nullable: true),
                     IsSoftDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -212,11 +199,6 @@ namespace QuizzSystem.Migrations
                         name: "FK_Competitions_AspNetUsers_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Competitions_CompetitionSettings_CompetitionSettingId",
-                        column: x => x.CompetitionSettingId,
-                        principalTable: "CompetitionSettings",
                         principalColumn: "Id");
                 });
 
@@ -306,11 +288,6 @@ namespace QuizzSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Competitions_CompetitionSettingId",
-                table: "Competitions",
-                column: "CompetitionSettingId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Competitions_CreatorId",
                 table: "Competitions",
                 column: "CreatorId");
@@ -366,9 +343,6 @@ namespace QuizzSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "CompetitionSettings");
         }
     }
 }

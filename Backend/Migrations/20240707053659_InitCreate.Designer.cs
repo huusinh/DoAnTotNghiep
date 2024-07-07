@@ -12,7 +12,7 @@ using QuizzSystem.Database;
 namespace QuizzSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240704132004_InitCreate")]
+    [Migration("20240707053659_InitCreate")]
     partial class InitCreate
     {
         /// <inheritdoc />
@@ -246,36 +246,16 @@ namespace QuizzSystem.Migrations
                     b.Property<int?>("CompetitionSettingId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreatorId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsSoftDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompetitionSettingId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Competitions");
-                });
-
-            modelBuilder.Entity("QuizzSystem.Models.CompetitionSetting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("ContestRule")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ContestTime")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("IsDefault")
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSoftDeleted")
@@ -292,7 +272,9 @@ namespace QuizzSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CompetitionSettings");
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Competitions");
                 });
 
             modelBuilder.Entity("QuizzSystem.Models.CompetitionTeam", b =>
@@ -424,15 +406,9 @@ namespace QuizzSystem.Migrations
 
             modelBuilder.Entity("QuizzSystem.Models.Competition", b =>
                 {
-                    b.HasOne("QuizzSystem.Models.CompetitionSetting", "CompetitionSetting")
-                        .WithMany("Competitions")
-                        .HasForeignKey("CompetitionSettingId");
-
                     b.HasOne("QuizzSystem.Models.AppUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId");
-
-                    b.Navigation("CompetitionSetting");
 
                     b.Navigation("Creator");
                 });
@@ -464,11 +440,6 @@ namespace QuizzSystem.Migrations
             modelBuilder.Entity("QuizzSystem.Models.Competition", b =>
                 {
                     b.Navigation("CompetitionTeams");
-                });
-
-            modelBuilder.Entity("QuizzSystem.Models.CompetitionSetting", b =>
-                {
-                    b.Navigation("Competitions");
                 });
 
             modelBuilder.Entity("QuizzSystem.Models.CompetitionTeam", b =>

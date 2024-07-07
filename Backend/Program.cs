@@ -83,7 +83,6 @@ namespace QuizzSystem
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<QuestionRepository>();
             builder.Services.AddScoped<CompetitionRepository>();
-            builder.Services.AddScoped<CompetitionSettingRepository>();
             builder.Services.AddScoped<CompetitionTeamRepository>();
             builder.Services.AddScoped<ResultRepository>();
 
