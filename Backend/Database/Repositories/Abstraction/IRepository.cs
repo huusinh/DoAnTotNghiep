@@ -14,7 +14,7 @@ namespace QuizzSystem.Database.Repositories.Abstraction
     {
         public ValueTask<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken = default);
 
-        public Task<Pagination<TEntity>> GetAllAsync(int pageIndex, CancellationToken cancellationToken = default);
+        public Task<Pagination<TEntity>> GetPagedDataAsync(int pageIndex, CancellationToken cancellationToken = default);
 
         public Task<List<TEntity>> FilterAsync(
             Expression<Func<TEntity, bool>> predicate,

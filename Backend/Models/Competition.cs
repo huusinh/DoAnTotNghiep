@@ -12,10 +12,9 @@ public partial class Competition : BaseEntity<int>
 
     public int? CompetitionSettingId { get; set; }
 
-
     public virtual CompetitionSetting? CompetitionSetting { get; set; }
 
     public virtual ICollection<CompetitionTeam> CompetitionTeams { get; set; } = new List<CompetitionTeam>();
 
-    public virtual Account? Creator { get; set; }
+    public virtual AppUser? Creator { get; set; }
 }

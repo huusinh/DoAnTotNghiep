@@ -29,7 +29,7 @@ namespace QuizzSystem.Database.Repositories.Abstraction
             return DbSet.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
         }
 
-        public async Task<Pagination<TEntity>> GetAllAsync(int pageIndex, CancellationToken cancellationToken = default)
+        public virtual async Task<Pagination<TEntity>> GetPagedDataAsync(int pageIndex, CancellationToken cancellationToken = default)
         {
             var list = await DbSet.ToListAsync(cancellationToken);
             var total = list.Count;

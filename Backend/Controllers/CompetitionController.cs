@@ -36,47 +36,50 @@ namespace QuizzSystem.Controllers
         [HttpPost]
         public IActionResult AddCompetition(CreateCompetition request)
         {
-            int settingID = _competitionSettingRepository.CreateID();
-            _competitionSettingRepository.Add(new Models.CompetitionSetting
+            using var transaction = _dbContext.Database.BeginTransaction();
+            var setting = new Models.CompetitionSetting
             {
-                Id = settingID,
                 ContestTime = request.ContestTime,
                 ContestRule = request.ContestRule,
                 MaxQuestionCount = request.MaxQuestionCount,
                 MaxTeamCount = request.MaxTeamCount,
-            });
-            int competitionID = _competitionRepository.CreateID();
-            _competitionRepository.Add(new Models.Competition
+            };
+            _competitionSettingRepository.Add(setting);
+            _dbContext.SaveChanges();
+
+            var competition = new Models.Competition
             {
-                Id= competitionID,
                 CompetitionName = request.CompetitionName,
                 CreatorId = request.CreatorID,
-                CompetitionSettingId = settingID
-            });
-            int teamID = _competitionTeamRepository.CreateID();
-            int resultID = _ResultRepository.CreateID();
+                CompetitionSettingId = setting.Id
+            };
+            _competitionRepository.Add(competition);
+            _dbContext.SaveChanges();
+
             foreach (var Team in request.TeamList)
             {
-                _competitionTeamRepository.Add(new Models.CompetitionTeam
+                var team = new Models.CompetitionTeam
                 {
-                    Id = teamID,
                     TeamName = Team.Key,
-                    CompetitionId = competitionID
-                });
+                    CompetitionId = competition.Id
+                };
+
+                _competitionTeamRepository.Add(team);
+                _dbContext.SaveChanges();
+
                 foreach(var item in Team.Value)
                 {
                     _ResultRepository.Add(new Result
                     {
-                        Id = resultID,
                         IsCorrect = 0,
                         QuestionId = item,
-                        CompetitionTeamId = teamID
+                        CompetitionTeamId = team.Id
                     });
-                    resultID++;
                 }
-                teamID++;
             }
+
             _dbContext.SaveChanges();
+            transaction.Commit();
 
             return Ok();
         }
@@ -101,12 +104,13 @@ namespace QuizzSystem.Controllers
 
             return Ok();
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllCompetition(int pageIndex)
         {
             try
             {
-                var result = await _competitionRepository.GetAllAsync(pageIndex);
+                var result = await _competitionRepository.GetPagedDataAsync(pageIndex);
                 return Ok(result);
             }
             catch (Exception e)

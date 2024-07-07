@@ -17,5 +17,4 @@ public partial class CompetitionSetting : BaseEntity<int>
     public int? MaxQuestionCount { get; set; }
 
     public bool? IsDefault { get; set; }
-    public virtual ICollection<Competition> Competitions { get; set; } = new List<Competition>();
 }

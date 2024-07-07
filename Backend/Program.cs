@@ -32,8 +32,10 @@ namespace QuizzSystem
                 options.GroupNameFormat = "'v'V";
                 options.SubstituteApiVersionInUrl = true;
             });
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+            builder.Services.AddIdentity<AppUser, AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddHostedService<AdminUserInitalizeService>();
 
             builder.Services.AddAuthentication(options =>
             {
@@ -49,7 +51,7 @@ namespace QuizzSystem
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     //ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    //alidAudience = builder.Configuration["Jwt:Audience"],
+                    //ValidAudience = builder.Configuration["Jwt:Audience"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
                 };
@@ -66,6 +68,16 @@ namespace QuizzSystem
                 options.UseSqlServer(connectionString).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("default", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -76,6 +88,8 @@ namespace QuizzSystem
             builder.Services.AddScoped<ResultRepository>();
 
             var app = builder.Build();
+
+            app.UseCors("default");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using QuizzSystem.Controllers.Abstraction;
+using QuizzSystem.Models;
 using QuizzSystem.Requests.Auth;
 using System;
 using System.Collections.Generic;
@@ -15,18 +16,19 @@ namespace QuizzSystem.Controllers
 {
     public class AuthenticationController : BaseController
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
 
         private readonly IConfiguration _configuration;
 
         private readonly SymmetricSecurityKey jwtSigningKey;
 
-        public AuthenticationController(UserManager<IdentityUser> userManger, IConfiguration configuration)
+        public AuthenticationController(UserManager<AppUser> userManger, IConfiguration configuration)
         {
             _userManager = userManger;
             _configuration = configuration;
             jwtSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SigningKey"]!));
         }
+
         [Route("sign-in")]
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInRequest request)
@@ -53,7 +55,7 @@ namespace QuizzSystem.Controllers
             });
         }
 
-        private string GenerateAccessToken(IdentityUser user)
+        private string GenerateAccessToken(AppUser user)
         {
             var claims = new List<Claim>
             {

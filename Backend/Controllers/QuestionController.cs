@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizzSystem.Controllers.Abstraction;
 using QuizzSystem.Database;
 using QuizzSystem.Database.Repositories;
@@ -9,24 +11,49 @@ using QuizzSystem.Requests.Question;
 
 namespace QuizzSystem.Controllers
 {
-	public class QuestionController : BaseController
-	{
+    public class QuestionController : BaseController
+    {
         private readonly AppDbContext _dbContext;
         private readonly QuestionRepository _questionRepository;
 
         public QuestionController(
-			AppDbContext dbContext,
-			QuestionRepository questionRepository)
-		{
-			_dbContext = dbContext;
+            AppDbContext dbContext,
+            QuestionRepository questionRepository)
+        {
+            _dbContext = dbContext;
             _questionRepository = questionRepository;
-		}
+        }
+
+        [HttpGet("{keywordId:int}")]
+        public async Task<IActionResult> GetQuestionById(int keywordId)
+        {
+            var result = await _questionRepository.GetByIdAsync(keywordId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("select")]
+        public async Task<IActionResult> GetQuestionsSelect()
+        {
+            var result = await _dbContext.Questions.Select(e => new
+            {
+                e.Id,
+                e.Keyword
+            }).ToListAsync();
+
+            return Ok(result);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllQuestion(int pageIndex)
         {
             try
             {
-                var result = await _questionRepository.GetAllAsync(pageIndex);
+                var result = await _questionRepository.GetPagedDataAsync(pageIndex);
                 return Ok(result);
             }
             catch(Exception e)
@@ -34,39 +61,46 @@ namespace QuizzSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
-		[HttpPost]
-		public IActionResult AddQuestion(CreateQuestion request)
-		{
-			_questionRepository.Add(new Models.Question
-			{
-				Description = request.Description,
-			});
 
-			_dbContext.SaveChanges();
-            
-			return Ok();
-		}
-
-        [HttpPost("Update")]
-        public IActionResult UpdateQuizz(CreateQuestion request)
+        [HttpPost]
+        public IActionResult AddQuestion(CreateQuestion request)
         {
-            _questionRepository.Update(new Models.Question
+            _questionRepository.Add(new Models.Question
             {
-                Description = request.Description
+                Description = request.Description,
+                Keyword = request.Keyword
             });
 
-            _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
+            
+            return Ok();
+        }
+
+        [HttpPost("{keywordId}/Update")]
+        public async Task<IActionResult> UpdateQuizz([FromRoute] int keywordId, CreateQuestion request)
+        {
+            var count = await _dbContext.Questions
+                                .Where(e => e.Id == keywordId)
+                                .ExecuteUpdateAsync(setters =>
+                                    setters
+                                        .SetProperty(e => e.Keyword, request.Keyword)
+                                        .SetProperty(e => e.Description, request.Description)
+            );
+
+            if (count == 0)
+            {
+                return NotFound();
+            }
 
             return Ok();
         }
 
-        [HttpPost("Delete")]
-        public IActionResult DeleteQuizz(int questionId)
+        [HttpPost("{keywordId}/Delete")]
+        public IActionResult DeleteQuizz([FromRoute] int keywordId)
         {
-            _questionRepository.Delete(questionId);
+            _questionRepository.Delete(keywordId);
 
             return Ok();
         }
     }
 }
-
