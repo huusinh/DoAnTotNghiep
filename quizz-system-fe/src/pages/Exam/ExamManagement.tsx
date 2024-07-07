@@ -7,16 +7,12 @@ import {
   setCurrentPage,
 } from "@main/features/slices/quizz.slice";
 import { QuizzRecord } from "@main/types/quizz.types";
+import { Dropdown } from "react-bootstrap";
 
 const ExamManagement = () => {
   const dispatch = useAppDispatch();
   const quizzData = useAppSelector(selectQuizzData);
-  const [pageIndex, setPageIndex] = useState(1);
 
-  useEffect(() => {
-    dispatch(setCurrentPage(pageIndex));
-    dispatch(getQuizzList());
-  }, [pageIndex, dispatch]);
 
 
 
@@ -24,8 +20,9 @@ const ExamManagement = () => {
     <>
       <div className="row">
         <div className="col-md-12">
+        <Dropdown.Toggle>Chọn đội thi</Dropdown.Toggle>
           <DataTable
-            tableTitle="Danh sách cuộc thi"
+            tableTitle=""
             data={quizzData.results}
             columns={[
               {
@@ -36,16 +33,14 @@ const ExamManagement = () => {
               {
                 name: "Đúng",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.contestRule,
+                  <input type="radio" name="a"></input>,
               },
               {
                 name: "Sai",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.maxQuestionCount,
+                  <input type="radio" name="a"></input>,
               },
             ]}
-            pageIndex={pageIndex}
-            setPageIndex={setPageIndex}
           />
         </div>
       </div>
