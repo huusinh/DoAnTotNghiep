@@ -8,7 +8,6 @@ import {
   setCurrentPage,
 } from "@main/features/slices/quizz.slice";
 import { QuizzRecord } from "@main/types/quizz.types";
-import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const QuizzManagement = () => {
@@ -28,10 +27,6 @@ const QuizzManagement = () => {
 
   const closeModal = () => {
     setModalDisplay(false);
-  };
-
-  const handleButtonClick = () => {
-    
   };
 
   return (
@@ -78,6 +73,7 @@ const QuizzManagement = () => {
             }
             pageIndex={pageIndex}
             setPageIndex={setPageIndex}
+            enablePagination
           />
         </div>
       </div>

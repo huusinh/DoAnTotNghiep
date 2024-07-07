@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using QuizzSystem.Controllers.Abstraction;
 using QuizzSystem.Models;
+using QuizzSystem.Models.Common;
 using QuizzSystem.Requests.Auth;
 using System;
 using System.Collections.Generic;
@@ -33,18 +34,20 @@ namespace QuizzSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Username);
+            var user = await _userManager.FindByNameAsync(request.Username);
+
+            var errorApiResponse = new ValidationErrorApiResponse("Username and/or password is incorrect!");
 
             if (user == null)
             {
-                return BadRequest("Username and/or password is incorrect!");
+                return BadRequest(errorApiResponse);
             }
 
             var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, request.Password);
 
             if (!isPasswordCorrect)
             {
-                return BadRequest("Username and/or password is incorrect!");
+                return BadRequest(errorApiResponse);
             }
 
             var accessToken = GenerateAccessToken(user);
@@ -55,11 +58,31 @@ namespace QuizzSystem.Controllers
             });
         }
 
+        [Route("sign-up")]
+        [HttpPost]
+        public async Task<IActionResult> SignUp(SignUpRequest request)
+        {
+            var signUpResult = await _userManager.CreateAsync(new AppUser
+            {
+                UserName = request.Username,
+                FullName = $"{request.FirstName} {request.LastName}",
+            }, request.Password);
+
+            if (!signUpResult.Succeeded)
+            {
+                var response = new ValidationErrorApiResponse(signUpResult.Errors);
+                return BadRequest(response);
+            }
+
+            return Ok();
+        }
+
         private string GenerateAccessToken(AppUser user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName!),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.FullName)
             };
 
             var token = new JwtSecurityToken(

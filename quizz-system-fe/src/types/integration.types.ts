@@ -1,7 +1,7 @@
 export interface IApiResponse<TResult> {
     success: boolean,
     result?: TResult,
-    error?: Record<string, string>
+    errors?: string[]
 }
 
 export interface PaginationResult<TData> {
@@ -9,6 +9,14 @@ export interface PaginationResult<TData> {
     results: TData[]
 }
 
+export const InitialPaginationResult = {
+    results: [],
+    totalItems: 0
+}
+
 export interface BaseRecord {
+    id: number,
     [key: string]: unknown
 }
+
+export type CreateRequest<TRecord> = Omit<TRecord, 'id'>

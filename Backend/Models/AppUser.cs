@@ -5,6 +5,8 @@ namespace QuizzSystem.Models
 {
     public class AppUser : IdentityUser<int>, ISoftDelete
     {
+        public string FullName { get; set; } = default!;
+
         public bool IsSoftDeleted { get; set; }
     }
 }

@@ -2,8 +2,34 @@ import { Button, Modal } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   closeMessageDialog,
+  Message,
   selectCurrentMessage,
 } from "@redux/slices/messages.slice";
+
+type MessageBodyPromptProps = {
+  messages?: Message;
+};
+
+const MessagePromptBody = ({ messages }: MessageBodyPromptProps) => {
+  if (!messages) {
+    return ''
+  }
+
+  if (
+    typeof messages === "string" ||
+    (Array.isArray(messages) && messages.length == 1)
+  ) {
+    return messages;
+  }
+
+  return (
+    <ul>
+      {messages.map((message, index) => (
+        <li key={index}>{message}</li>
+      ))}
+    </ul>
+  );
+};
 
 export const MessagePrompt = () => {
   const dispatch = useAppDispatch();
@@ -11,15 +37,15 @@ export const MessagePrompt = () => {
 
   const closeModal = () => {
     dispatch(closeMessageDialog());
-  }
+  };
 
   const handleClosePrimary = () => {
-    closeModal()
+    closeModal();
     messageOption?.onPrimaryButtonClick?.();
   };
 
   const handleCloseSecondary = () => {
-    closeModal()
+    closeModal();
     messageOption?.onSecondaryButtonClick?.();
   };
 
@@ -33,7 +59,9 @@ export const MessagePrompt = () => {
       centered
     >
       <Modal.Header closeButton />
-      <Modal.Body>{messageOption?.message ?? ""}</Modal.Body>
+      <Modal.Body>
+        <MessagePromptBody messages={messageOption?.message} />
+      </Modal.Body>
       <Modal.Footer>
         {messageOption?.secondaryButtonText && (
           <Button variant="secondary" onClick={handleCloseSecondary}>

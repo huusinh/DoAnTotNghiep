@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,12 +48,26 @@ namespace QuizzSystem.Models.Common
 
     public class ValidationErrorApiResponse : IErrorApiResponse
     {
-        public Dictionary<string, string[]> Errors { get; private set; } = new();
+        public List<string> Errors { get; private set; } = new();
 
-        public ValidationErrorApiResponse(ModelStateDictionary modelState)
+        private ValidationErrorApiResponse()
         {
             Messages = "One or more errors occurred in model data, check \"errors\" fields below";
+        }
+
+        public ValidationErrorApiResponse(params string[] messages) : this()
+        {
+            Errors.AddRange(messages);
+        }
+
+        public ValidationErrorApiResponse(ModelStateDictionary modelState) : this()
+        {
             AssignErrors(modelState);
+        }
+
+        public ValidationErrorApiResponse(IEnumerable<IdentityError> identityErrors) : this()
+        {
+            AssignErrors(identityErrors);
         }
 
         private void AssignErrors(ModelStateDictionary modelState)
@@ -60,8 +75,13 @@ namespace QuizzSystem.Models.Common
             foreach (var entry in modelState)
             {
                 var errors = entry.Value.Errors.Select(e => e.ErrorMessage).ToArray();
-                Errors.Add(entry.Key, errors);
+                Errors.AddRange(errors);
             }
+        }
+
+        private void AssignErrors(IEnumerable<IdentityError> identityErrors)
+        {
+            Errors.AddRange(identityErrors.Select(e => e.Description));
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizzSystem.Database;
 
@@ -11,9 +12,11 @@ using QuizzSystem.Database;
 namespace QuizzSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240707092617_AddUserInfo")]
+    partial class AddUserInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,16 +250,36 @@ namespace QuizzSystem.Migrations
                     b.Property<int?>("CompetitionSettingId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSoftDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompetitionSettingId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Competitions");
+                });
+
+            modelBuilder.Entity("QuizzSystem.Models.CompetitionSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("ContestRule")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ContestTime")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreatorId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsCompleted")
+                    b.Property<bool?>("IsDefault")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSoftDeleted")
@@ -273,9 +296,7 @@ namespace QuizzSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Competitions");
+                    b.ToTable("CompetitionSettings");
                 });
 
             modelBuilder.Entity("QuizzSystem.Models.CompetitionTeam", b =>
@@ -407,9 +428,15 @@ namespace QuizzSystem.Migrations
 
             modelBuilder.Entity("QuizzSystem.Models.Competition", b =>
                 {
+                    b.HasOne("QuizzSystem.Models.CompetitionSetting", "CompetitionSetting")
+                        .WithMany()
+                        .HasForeignKey("CompetitionSettingId");
+
                     b.HasOne("QuizzSystem.Models.AppUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId");
+
+                    b.Navigation("CompetitionSetting");
 
                     b.Navigation("Creator");
                 });

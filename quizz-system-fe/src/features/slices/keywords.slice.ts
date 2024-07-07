@@ -1,5 +1,5 @@
 import { get, post } from "@main/apis";
-import { PaginationResult } from "@main/types/integration.types";
+import { CreateRequest, PaginationResult } from "@main/types/integration.types";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@redux/store";
 import { KeywordRecord } from "@main/types/keyword.types";
@@ -43,7 +43,7 @@ export const getKeywords = createAsyncThunk(
 
 export const createKeyword = createAsyncThunk(
   "keywords/create",
-  async (payload: KeywordRecord, { rejectWithValue }) => {
+  async (payload: CreateRequest<KeywordRecord>, { rejectWithValue }) => {
     try {
       return await post({
         path: "question",

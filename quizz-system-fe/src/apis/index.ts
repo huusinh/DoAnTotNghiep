@@ -52,8 +52,8 @@ apiClient.interceptors.response.use(
       store.dispatch(closeLoadingDialog());
     }
 
-    if (err.response?.data?.error) {
-      store.dispatch(showMessageDialog(err.response?.data?.error));
+    if (err.response?.data.errors) {
+      store.dispatch(showMessageDialog(err.response?.data?.errors));
     } else {
       store.dispatch(showMessageDialog("Cannot connect to server"));
     }

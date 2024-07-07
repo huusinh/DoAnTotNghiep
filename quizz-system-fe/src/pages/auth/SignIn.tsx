@@ -3,6 +3,7 @@ import { useAppDispatch } from "@main/features/hooks";
 import { signIn } from "@main/features/slices/authentication.slice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 const SignIn = () => {
   const dispatch = useAppDispatch();
@@ -38,11 +39,11 @@ const SignIn = () => {
                   <form className="user" onSubmit={onSignInClick}>
                     <div className="form-group">
                       <input
-                        type="email"
+                        type="text"
                         className="form-control form-control-user"
                         id="exampleInputEmail"
                         aria-describedby="emailHelp"
-                        placeholder="Enter Email Address..."
+                        placeholder="Enter username"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                       />
@@ -72,19 +73,17 @@ const SignIn = () => {
                         </label>
                       </div>
                     </div>
-                    <a
-                      href="#"
-                      className="btn btn-primary btn-user btn-block"
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="btn-user btn-block"
                     >
                       Login
-                    </a>
+                    </Button>
                   </form>
                   <hr />
                   <div className="text-center">
-                    <Link className="small" to="/authentication/forgot-password" />
-                  </div>
-                  <div className="text-center">
-                    <Link className="small" to="/authentication/sign-up" />
+                    <Link className="small" to="/authentication/sign-up">Create an Account!</Link>
                   </div>
                 </div>
               </div>

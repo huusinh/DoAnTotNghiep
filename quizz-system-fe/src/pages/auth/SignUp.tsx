@@ -1,12 +1,43 @@
+import { useAppDispatch } from "@main/features/hooks";
+import { signUp } from "@main/features/slices/authentication.slice";
+import { showMessageDialog } from "@main/features/slices/messages.slice";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
+
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    dispatch(
+      signUp({
+        firstName,
+        lastName,
+        username,
+        password,
+      })
+    )
+      .then(unwrapResult)
+      .then(() => {
+        dispatch(
+          showMessageDialog({
+            message: "Đăng ký thành công",
+            onPrimaryButtonClick: () => {
+              navigate("/authentication/sign-in");
+            },
+          })
+        );
+      });
+  };
 
   return (
     <div className="row justify-content-center">
@@ -18,7 +49,7 @@ const SignUp = () => {
                 <div className="text-center">
                   <h1 className="h4 text-gray-900 mb-4">Create an Account!</h1>
                 </div>
-                <form className="user">
+                <form className="user" onSubmit={onFormSubmit}>
                   <div className="form-group row">
                     <div className="col-sm-6 mb-3 mb-sm-0">
                       <input
@@ -43,46 +74,33 @@ const SignUp = () => {
                   </div>
                   <div className="form-group">
                     <input
-                      type="email"
+                      type="text"
                       className="form-control form-control-user"
                       id="exampleInputEmail"
-                      placeholder="Email Address"
+                      placeholder="Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
-                  <div className="form-group row">
-                    <div className="col-sm-6 mb-3 mb-sm-0">
-                      <input
-                        type="password"
-                        className="form-control form-control-user"
-                        id="exampleInputPassword"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-sm-6">
-                      <input
-                        type="password"
-                        className="form-control form-control-user"
-                        id="exampleRepeatPassword"
-                        placeholder="Repeat Password"
-                        value={repeatPassword}
-                        onChange={(e) => setRepeatPassword(e.target.value)}
-                      />
-                    </div>
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      className="form-control form-control-user"
+                      id="exampleInputPassword"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
                   </div>
-                  <a href="#" className="btn btn-primary btn-user btn-block">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    className="btn-user btn-block"
+                  >
                     Register Account
-                  </a>
+                  </Button>
                 </form>
                 <hr />
-                <div className="text-center">
-                  <Link className="small" to="/authentication/forgot-password">
-                    Forgot Password?
-                  </Link>
-                </div>
                 <div className="text-center">
                   <Link className="small" to="/authentication/sign-in">
                     Already have an account? Login!

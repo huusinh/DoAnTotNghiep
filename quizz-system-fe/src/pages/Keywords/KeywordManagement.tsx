@@ -68,7 +68,7 @@ const KeywordManagement = () => {
         <div className="col-md-12">
           <DataTable
             tableTitle="Danh sách từ khóa"
-            data={keywords.results}
+            data={keywords}
             additionalHeaderElement={
               <button className="btn btn-primary" onClick={openAddKeywordModal}>
                 Thêm từ khóa
@@ -78,6 +78,7 @@ const KeywordManagement = () => {
             pageIndex={pageIndex}
             setPageIndex={setPageIndex}
             onRowActionClick={onRowActionClick}
+            enablePagination
           />
         </div>
       </div>

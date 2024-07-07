@@ -25,9 +25,10 @@ namespace QuizzSystem
             var isUserExisted = await userManager.FindByNameAsync("admin");
             if (isUserExisted == null)
             {
-                var result = await userManager.CreateAsync(new AppUser
+                await userManager.CreateAsync(new AppUser
                 {
                     UserName = "admin",
+                    FullName = "admin",
                     Email = "admin@gmail.com"
                 }, "Admin@2024");
             }

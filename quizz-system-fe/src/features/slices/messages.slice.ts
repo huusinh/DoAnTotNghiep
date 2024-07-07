@@ -1,16 +1,18 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@redux/store";
 
+export type Message = string | string[]
+
 export type MessageOption = {
-  message: string;
+  message: Message;
   onPrimaryButtonClick?: () => void;
   onSecondaryButtonClick?: () => void;
-  primaryButtonText?: string
-  secondaryButtonText?: string
+  primaryButtonText?: string;
+  secondaryButtonText?: string;
 };
 
 const initialState = {
-  messages: [] as (MessageOption | string)[],
+  messages: [] as (MessageOption | Message)[],
 };
 
 const messagesSlice = createSlice({
@@ -19,9 +21,13 @@ const messagesSlice = createSlice({
   reducers: {
     showMessageDialog(
       state,
-      { payload }: PayloadAction<MessageOption | string>
+      { payload }: PayloadAction<MessageOption | Message>
     ) {
       if (typeof payload === "string") {
+        state.messages.unshift({
+          message: [payload],
+        });
+      } else if (Array.isArray(payload)) {
         state.messages.unshift({
           message: payload,
         });
@@ -35,6 +41,7 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { showMessageDialog, closeMessageDialog } = messagesSlice.actions
+export const { showMessageDialog, closeMessageDialog } = messagesSlice.actions;
 export const messagesReducer = messagesSlice.reducer;
-export const selectCurrentMessage = (state: RootState) => state.messages.messages[0] as MessageOption;
+export const selectCurrentMessage = (state: RootState) =>
+  state.messages.messages[0] as MessageOption;

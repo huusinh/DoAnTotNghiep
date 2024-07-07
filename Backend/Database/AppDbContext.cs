@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using QuizzSystem.Database.Configuration;
 using QuizzSystem.Models;
+using QuizzSystem.Models.Common;
+using System.Linq;
 using System.Reflection;
 
 namespace QuizzSystem.Database

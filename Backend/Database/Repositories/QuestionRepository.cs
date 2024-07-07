@@ -9,8 +9,6 @@ namespace QuizzSystem.Database.Repositories
 		public QuestionRepository(AppDbContext dbContext) : base(dbContext.Questions)
 		{
 		}
-
-
 	}
 }
 

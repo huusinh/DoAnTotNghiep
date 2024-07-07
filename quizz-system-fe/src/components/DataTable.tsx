@@ -1,3 +1,8 @@
+import {
+  BaseRecord,
+  PaginationResult,
+  InitialPaginationResult,
+} from "@main/types/integration.types";
 import { ReactNode, SetStateAction, useMemo } from "react";
 import { Button } from "react-bootstrap";
 import { PaginationControl } from "react-bootstrap-pagination-control";
@@ -13,52 +18,64 @@ export type ColumnDefinition =
 
 export interface DataTableProps {
   tableTitle: string;
-  data: Record<string, unknown>[];
+  data: BaseRecord[] | PaginationResult<BaseRecord>;
   columns?: ColumnDefinition[];
   additionalHeaderElement?: ReactNode;
-  pageIndex: number;
-  setPageIndex: React.Dispatch<SetStateAction<number>>;
+  pageIndex?: number;
+  setPageIndex?: React.Dispatch<SetStateAction<number>>;
   onRowActionClick?: (
     actionType: "update" | "delete",
     recordId: number
   ) => void;
+  enablePagination?: boolean;
 }
 
 interface DataTableCellProps {
-  record: Record<string, unknown>;
+  record: BaseRecord;
   column: ColumnDefinition;
 }
 
 const DataTableCell = ({ record, column }: DataTableCellProps): ReactNode => {
-  if (typeof column === 'string' && typeof record[column] === "object") {
+  if (typeof column === "string" && typeof record[column] === "object") {
     return null;
   }
 
-  if (typeof column === 'object') {
-    return column.valueMapper?.(record) ?? ''
+  if (typeof column === "object") {
+    return column.valueMapper?.(record) ?? "";
   }
 
-  return record[typeof(column) === 'string' ? column : column['name']] as string;
+  return record[typeof column === "string" ? column : column["name"]] as string;
 };
 
 export const DataTable = ({
-  data = [],
+  data = InitialPaginationResult,
   tableTitle,
   columns,
   additionalHeaderElement,
   pageIndex,
   setPageIndex,
   onRowActionClick,
+  enablePagination,
 }: DataTableProps) => {
+  const actualData = useMemo(() => {
+    const isArray = Array.isArray(data)
+
+    if (!isArray && !enablePagination) {
+      throw new Error('')
+    }
+
+    return isArray ? data : data.results
+  }, [data, enablePagination])
+
   const tableColumns = useMemo(() => {
     if (columns) {
       return columns;
-    } else if (data.length === 0) {
+    } else if (actualData.length === 0) {
       return [];
     }
 
-    return Object.keys(data[0]);
-  }, [data, columns]);
+    return Object.keys(actualData[0]);
+  }, [actualData, columns]);
 
   return (
     <>
@@ -86,7 +103,7 @@ export const DataTable = ({
                 </tr>
               </thead>
               <tbody>
-                {data.map((rowData, rowIndex) => (
+                {actualData.map((rowData, rowIndex) => (
                   <tr key={`r${rowIndex}`}>
                     {tableColumns.map((column, columnIndex) => (
                       <td key={`r${rowIndex}-c${columnIndex}`}>
@@ -97,13 +114,13 @@ export const DataTable = ({
                       <td
                         style={{
                           gap: "0.5rem",
-                          justifyContent: "end"
+                          justifyContent: "end",
                         }}
                         className="d-flex"
                       >
                         <Button
                           onClick={() => {
-                            onRowActionClick("update", rowData["id"] as number);
+                            onRowActionClick("update", rowData.id);
                           }}
                           className="primary"
                         >
@@ -111,7 +128,7 @@ export const DataTable = ({
                         </Button>
                         <Button
                           onClick={() => {
-                            onRowActionClick("delete", rowData["id"] as number);
+                            onRowActionClick("delete", rowData.id);
                           }}
                           className="primary"
                         >
@@ -125,18 +142,20 @@ export const DataTable = ({
             </table>
           </div>
         </div>
-        <div className="card-footer d-flex justify-content-end">
-          <PaginationControl
-            page={pageIndex}
-            between={4}
-            total={data.length}
-            limit={10}
-            changePage={(page) => {
-              setPageIndex(page);
-            }}
-            ellipsis={2}
-          />
-        </div>
+        {enablePagination && (
+          <div className="card-footer d-flex justify-content-end">
+            <PaginationControl
+              page={pageIndex}
+              between={4}
+              total={(data as PaginationResult<BaseRecord>).totalItems}
+              limit={10}
+              changePage={(page) => {
+                setPageIndex!(page);
+              }}
+              ellipsis={2}
+            />
+          </div>
+        )}
       </div>
     </>
   );

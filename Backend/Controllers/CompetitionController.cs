@@ -2,8 +2,8 @@
 using QuizzSystem.Controllers.Abstraction;
 using QuizzSystem.Database.Repositories;
 using QuizzSystem.Database;
-using QuizzSystem.Requests.Question;
 using QuizzSystem.Requests.Competition;
+using QuizzSystem.Models;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using System.Threading.Tasks;
 using System;
