@@ -16,13 +16,11 @@ export const AddKeywordPrompt = ({
 }: AddKeywordPromptProps) => {
   const dispatch = useAppDispatch();
   const [keyword, setKeyword] = useState("");
-  const [description, setDescription] = useState("");
 
   const onSubmitClick = () => {
     dispatch(
       createKeyword({
         keyword,
-        description,
       })
     )
       .then(unwrapResult)
@@ -45,15 +43,8 @@ export const AddKeywordPrompt = ({
             <Form.Control
               type="text"
               value={keyword}
+              required
               onChange={(e) => setKeyword(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Mô tả từ khóa</Form.Label>
-            <Form.Control
-              as="textarea"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
             />
           </Form.Group>
         </Form>

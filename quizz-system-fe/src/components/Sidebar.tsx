@@ -44,6 +44,8 @@ const SidebarComponent = () => {
         </Link>
       </li>
 
+      <hr className="sidebar-divider my-0" />
+
       <li className="nav-item active">
         <Link className="nav-link" to="/histories">
           <i className="fas fa-fw fa-tachometer-alt"></i>

@@ -20,7 +20,7 @@ function App() {
           <Route path="keywords" element={<KeywordsManagement />} />
           <Route path="quizz" element={<QuizzManagement />} />
           <Route path="histories" element={<HistoriesManagement />} />
-          <Route path="exam" element={<ExamManagement />} />
+          <Route path="exam/:competitionId" element={<ExamManagement />} />
         </Route>
         <Route path="/authentication" element={<AuthenticationLayout />}>
           <Route path="sign-in" element={<SignIn />} />

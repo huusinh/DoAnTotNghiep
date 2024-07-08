@@ -36,17 +36,17 @@ const HistoriesManagement = () => {
               {
                 name: "Tên đội",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.maxTeamCount,
+                  (record as QuizzRecord).maxTeamCount,
               },
               {
                 name: "Số câu dúng",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.maxQuestionCount,
+                  (record as QuizzRecord).maxQuestionCount,
               },
               {
                 name: "Số câu sai",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.maxQuestionCount,
+                  (record as QuizzRecord).maxQuestionCount,
               },
             ]}
             pageIndex={pageIndex}

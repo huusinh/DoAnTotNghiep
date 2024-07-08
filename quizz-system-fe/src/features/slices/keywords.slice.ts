@@ -21,7 +21,7 @@ const initialState: InitialState = {
 
 type UpdateKeywordRequest = {
   keywordId: number;
-} & KeywordRecord;
+} & Omit<KeywordRecord, "id">;
 
 export const getKeywords = createAsyncThunk(
   "keywords/fetch",

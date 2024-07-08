@@ -18,21 +18,18 @@ export const UpdateKeywordPrompt = ({
 }: UpdateKeywordPromptProps) => {
   const dispatch = useAppDispatch();
   const [keyword, setKeyword] = useState("");
-  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (edittingKeywordId) {
       dispatch(getKeywordById(edittingKeywordId))
         .then(unwrapResult)
-        .then(({ keyword, description }) => {
+        .then(({ keyword }) => {
           setKeyword(keyword)
-          setDescription(description)
         })
     }
 
     return () => {
       setKeyword('')
-      setDescription('')
     }
   }, [edittingKeywordId, dispatch])
 
@@ -41,7 +38,6 @@ export const UpdateKeywordPrompt = ({
       updateKeyword({
         keywordId: edittingKeywordId!,
         keyword,
-        description,
       })
     )
       .then(unwrapResult)
@@ -65,14 +61,6 @@ export const UpdateKeywordPrompt = ({
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Mô tả từ khóa</Form.Label>
-            <Form.Control
-              as="textarea"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
             />
           </Form.Group>
         </Form>

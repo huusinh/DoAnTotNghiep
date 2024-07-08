@@ -45,22 +45,22 @@ const QuizzManagement = () => {
               {
                 name: "Luật thi",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.contestRule,
+                  (record as QuizzRecord).contestRule,
               },
               {
                 name: "Số đội tối đa",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.maxTeamCount,
+                  (record as QuizzRecord).maxTeamCount,
               },
               {
                 name: "Số câu hỏi tối đa",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionSetting.maxQuestionCount,
+                  (record as QuizzRecord).maxQuestionCount,
               },
               {
                 name: "",
-                valueMapper: () => (
-                  <Link className="btn btn-primary" to="/exam">
+                valueMapper: (record) => (
+                  <Link className="btn btn-primary" to={`/exam/${record.id}`}>
                     Thi
                   </Link>
                 ),

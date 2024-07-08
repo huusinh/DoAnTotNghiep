@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizzSystem.Controllers.Abstraction;
-using QuizzSystem.Database.Repositories;
 using QuizzSystem.Database;
+using QuizzSystem.Database.Repositories;
+using QuizzSystem.Models;
 using QuizzSystem.Requests.Competition;
-using QuizzSystem.Models;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using System.Threading.Tasks;
 using System;
-using QuizzSystem.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace QuizzSystem.Controllers
 {
@@ -124,14 +124,32 @@ namespace QuizzSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [HttpGet("{competitionId:int}")]
         public async Task<IActionResult> GetCompetitionById(int competitionId)
         {
-            var result = await _competitionRepository.GetByIdAsync(competitionId);
+            var result = await _dbContext.Competitions.Include(e => e.CompetitionTeams).FirstOrDefaultAsync(e => e.Id == competitionId);
             if (result == null)
             {
                 return NotFound();
             }
+            return Ok(result);
+        }
+
+        [HttpGet("{competitionId:int}/teams/{teamId:int}/questions")]
+        public async Task<IActionResult> GetQuestionsOfTeam(int competitionId, int teamId)
+        {
+            var result = await _dbContext.Results
+                                    .Include(e => e.Question)
+                                    .Where(e => e.CompetitionTeam!.Competition!.Id == competitionId
+                                                && e.CompetitionTeamId == teamId)
+                                    .ToListAsync();
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
             return Ok(result);
         }
     }

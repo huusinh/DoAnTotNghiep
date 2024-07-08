@@ -7,7 +7,7 @@ import { ReactNode, SetStateAction, useMemo } from "react";
 import { Button } from "react-bootstrap";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 
-type DataTableCellFunc = (record: Record<string, unknown>) => ReactNode;
+type DataTableCellFunc = (record: BaseRecord) => ReactNode;
 
 export type ColumnDefinition =
   | string

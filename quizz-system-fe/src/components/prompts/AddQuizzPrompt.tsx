@@ -166,6 +166,7 @@ export const AddQuizzPrompt = ({
 
                   setMaxTeams(e.target.value);
                 }}
+                required
                 onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key !== "Backspace" && Number.isNaN(Number(e.key))) {
                     e.preventDefault();
@@ -178,6 +179,7 @@ export const AddQuizzPrompt = ({
               <Form.Control
                 type="text"
                 value={maxKeywords}
+                required
                 onChange={(e) => setMaxQuestions(e.target.value)}
                 onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key !== "Backspace" && Number.isNaN(Number(e.key))) {
@@ -197,6 +199,7 @@ export const AddQuizzPrompt = ({
                     <Form.Control
                       type="text"
                       value={teamName[teamIndex]}
+                      required
                       onChange={updateTeamName(teamIndex)}
                     />
                   </Form.Group>
@@ -257,6 +260,7 @@ export const AddQuizzPrompt = ({
                 <Form.Control
                   type="text"
                   value={minute}
+                  required
                   onChange={(e) => setMinute(e.target.value)}
                   onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key !== "Backspace" && Number.isNaN(Number(e.key))) {
@@ -271,9 +275,10 @@ export const AddQuizzPrompt = ({
                 <Form.Control
                   type="text"
                   value={second}
+                  required
                   onChange={(e) => {
-                    if (e.target.value === '') {
-                      setSecond('')
+                    if (e.target.value === "") {
+                      setSecond("");
                     } else {
                       const newValue = Math.min(Number(e.target.value), 59);
                       setSecond(newValue.toString());

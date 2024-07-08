@@ -67,7 +67,6 @@ namespace QuizzSystem.Controllers
         {
             _questionRepository.Add(new Models.Question
             {
-                Description = request.Description,
                 Keyword = request.Keyword
             });
 
@@ -84,7 +83,6 @@ namespace QuizzSystem.Controllers
                                 .ExecuteUpdateAsync(setters =>
                                     setters
                                         .SetProperty(e => e.Keyword, request.Keyword)
-                                        .SetProperty(e => e.Description, request.Description)
             );
 
             if (count == 0)

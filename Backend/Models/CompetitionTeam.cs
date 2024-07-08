@@ -1,6 +1,7 @@
 ﻿using QuizzSystem.Models.Common;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace QuizzSystem.Models;
 
@@ -10,6 +11,7 @@ public partial class CompetitionTeam : BaseEntity<int>
 
     public int? CompetitionId { get; set; }
 
+    [JsonIgnore]
     public virtual Competition? Competition { get; set; }
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
