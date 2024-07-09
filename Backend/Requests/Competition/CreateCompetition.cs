@@ -5,6 +5,7 @@ namespace QuizzSystem.Requests.Competition
     public class CreateCompetition
     {
         public string CompetitionName { get; set; } = default!;
+        public int QuestionScore { get; set; }
         public int CreatorID { get; set; }
         public int ContestTime { get; set; }
         public string? ContestRule { get; set; }

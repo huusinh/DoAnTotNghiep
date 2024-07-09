@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using QuizzSystem.Controllers.Abstraction;
 using QuizzSystem.Database;
@@ -8,6 +9,7 @@ using QuizzSystem.Requests.Competition;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace QuizzSystem.Controllers
 {
@@ -43,7 +45,8 @@ namespace QuizzSystem.Controllers
                 ContestTime = request.ContestTime,
                 ContestRule = request.ContestRule,
                 MaxQuestionCount = request.MaxQuestionCount,
-                MaxTeamCount = request.MaxTeamCount
+                MaxTeamCount = request.MaxTeamCount,
+                QuestionScore = request.QuestionScore,
             };
             _competitionRepository.Add(competition);
             _dbContext.SaveChanges();
@@ -75,18 +78,52 @@ namespace QuizzSystem.Controllers
 
             return Ok();
         }
-
-        [HttpPost("Update")]
-        public IActionResult UpdateCompetition(CreateCompetition request)
+        [HttpPost("{competitionID}/Update")]
+        public async Task<IActionResult> UpdateCompetition([FromRoute] int competitionID, CreateCompetition request)
         {
-            _competitionRepository.Update(new Models.Competition
+            using var transaction = _dbContext.Database.BeginTransaction();
+            var count = await _dbContext.Competitions
+                                .Where(e => e.Id == competitionID)
+                                .ExecuteUpdateAsync(setters =>
+                                    setters
+                                        .SetProperty(e => e.CompetitionName, request.CompetitionName)
+                                        .SetProperty(e => e.ContestTime, request.ContestTime)
+                                        .SetProperty(e=> e.ContestRule, request.ContestRule)
+                                        .SetProperty(e=> e.MaxQuestionCount, request.MaxQuestionCount)
+                                        .SetProperty(e=> e.MaxTeamCount, request.MaxTeamCount)
+                                        .SetProperty(e=> e.QuestionScore, request.QuestionScore)
+            );
+            if (count == 0)
             {
-                CompetitionName = request.CompetitionName
-            });
+                return NotFound();
+            }
+            await _dbContext.CompetitionTeams.Where(t => t.CompetitionId == competitionID)
+                                                .ExecuteDeleteAsync();
+            foreach (var Team in request.TeamList)
+            {
+                var team = new Models.CompetitionTeam
+                {
+                    TeamName = Team.Key,
+                    CompetitionId = competitionID
+                };
 
-            _dbContext.SaveChangesAsync();
+                _competitionTeamRepository.Add(team);
+                _dbContext.SaveChanges();
 
+                foreach (var item in Team.Value)
+                {
+                    _ResultRepository.Add(new Result
+                    {
+                        IsCorrect = 0,
+                        QuestionId = item,
+                        CompetitionTeamId = team.Id
+                    });
+                }
+            }
+            _dbContext.SaveChanges();
+            transaction.Commit();
             return Ok();
+
         }
 
         [HttpPost("{competitionId}/Delete")]
@@ -155,6 +192,35 @@ namespace QuizzSystem.Controllers
             }
 
             return Ok(result);
+        }
+        [HttpPost("Submit")]
+        public async Task<IActionResult> SubmitTeamResult(SaveResultRequest request)
+        {
+            try
+            {
+                foreach(var item in request.ResultDic)
+                {
+                    var recordCount = await _dbContext.Results
+                                .Where(e => e.Id == item.Key && e.CompetitionTeamId == request.CompetitionTeamID)
+                                .ExecuteUpdateAsync(setters =>
+                                    setters
+                                        .SetProperty(e => e.IsCorrect, item.Value ? 1 : 0));
+                    if (recordCount == 0)
+                    {
+                        return NotFound();
+                    }
+                }
+                TeamResultReponse teamResultReponse = new TeamResultReponse()
+                { 
+                    CorrectAnswerCount = request.ResultDic.Count(i => i.Value),
+                    TeamScore = request.ResultDic.Count(i => i.Value) * request.QuestionScore,
+                };
+                return Ok(teamResultReponse);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
