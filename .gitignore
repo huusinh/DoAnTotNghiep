@@ -22,6 +22,7 @@
 */[Bb]in/
 */[Oo]bj/
 */[Ll]og/
+*/.vs/
 
 # nodejs modules
 node_modules/
