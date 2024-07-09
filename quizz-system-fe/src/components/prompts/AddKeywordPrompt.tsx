@@ -20,7 +20,9 @@ export const AddKeywordPrompt = ({
   const dispatch = useAppDispatch();
   const [keyword, setKeyword] = useState("");
 
-  const onSubmitClick = () => {
+  const onSubmitClick = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
     dispatch(
       createKeyword({
         keyword,

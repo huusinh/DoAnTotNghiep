@@ -4,20 +4,30 @@ import {
   selectKeywordsDropdown,
 } from "@main/features/slices/keywords.slice";
 import { showMessageDialog } from "@main/features/slices/messages.slice";
-import { addQuizz, getQuizzList } from "@main/features/slices/quizz.slice";
+import {
+  getQuizzDetail,
+  getQuizzList,
+  updateQuizz,
+} from "@main/features/slices/quizz.slice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Form, Modal } from "react-bootstrap";
 
-type AddQuizzPromptProps = {
-  display: boolean;
-  closeModal: () => void;
+const calculateMinute = (second: number): [minute: number, second: number] => {
+  return [Math.floor(second / 60), second % 60];
 };
 
-export const AddQuizzPrompt = ({
+type UpdateQuizzPromptProps = {
+  display: boolean;
+  closeModal: () => void;
+  edittingQuizzId: number | undefined;
+};
+
+export const UpdateQuizzPrompt = ({
   display,
   closeModal,
-}: AddQuizzPromptProps) => {
+  edittingQuizzId,
+}: UpdateQuizzPromptProps) => {
   const dispatch = useAppDispatch();
   const keywordsDropdown = useAppSelector(selectKeywordsDropdown);
 
@@ -46,7 +56,8 @@ export const AddQuizzPrompt = ({
     }
 
     dispatch(
-      addQuizz({
+      updateQuizz({
+        competitionId: edittingQuizzId!,
         competitionName: name,
         maxTeamCount: Number(maxTeams) ?? 0,
         maxQuestionCount: Number(maxKeywords) ?? 0,
@@ -106,6 +117,40 @@ export const AddQuizzPrompt = ({
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    if (edittingQuizzId) {
+      dispatch(getQuizzDetail(edittingQuizzId))
+        .then(unwrapResult)
+        .then((data) => {
+          console.log(data);
+          setName(data.competitionName);
+          setContestRule(data.contestRule);
+          setMaxTeams(data.maxTeamCount.toString());
+          setMaxQuestions(data.maxQuestionCount.toString());
+          setTeamName(data.competitionTeams!.map((e) => e.teamName));
+          const teamKeywords = [] as number[][];
+          const keywordsSet = new Set<number>();
+
+          for (const team of data.competitionTeams!) {
+            const keywords = team.results.map((e) => e.question.id);
+            for (const keyword of keywords) {
+              keywordsSet.add(keyword);
+            }
+            teamKeywords.push(keywords);
+          }
+
+          setTeamKeywords(
+            data.competitionTeams!.map((e) => [...e.results.map((e) => e.id)])
+          );
+          setSelectedKeywords(keywordsSet);
+
+          const [minute, second] = calculateMinute(data.contestTime);
+          setMinute(minute.toString());
+          setSecond(second.toString());
+        });
+    }
+  }, [edittingQuizzId, dispatch]);
+
   return (
     <Modal
       scrollable
@@ -118,7 +163,7 @@ export const AddQuizzPrompt = ({
         <Modal.Title>Add question</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form id="add-quizz-form" onSubmit={onSubmitClick}>
+        <Form id="update-quizz-form" onSubmit={onSubmitClick}>
           <Form.Group>
             <Form.Label>Tên cuộc thi</Form.Label>
             <Form.Control
@@ -298,7 +343,11 @@ export const AddQuizzPrompt = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button type="submit" variant="primary" form="add-quizz-form">
+        <Button
+          type="submit"
+          variant="primary"
+          form="update-quizz-form"
+        >
           Submit
         </Button>
       </Modal.Footer>

@@ -37,7 +37,9 @@ export const UpdateKeywordPrompt = ({
     };
   }, [edittingKeywordId, dispatch]);
 
-  const onSubmitClick = () => {
+  const onSubmitClick = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
     dispatch(
       updateKeyword({
         keywordId: edittingKeywordId!,
@@ -64,6 +66,7 @@ export const UpdateKeywordPrompt = ({
             <Form.Control
               type="text"
               value={keyword}
+              required
               onChange={(e) => setKeyword(e.target.value)}
             />
           </Form.Group>

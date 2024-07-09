@@ -1,4 +1,4 @@
-import { PaginationResult } from "@main/types/integration.types";
+import { CreateRequest, PaginationResult } from "@main/types/integration.types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CreateQuizz, QuizzRecord, QuizzResult } from "@main/types/quizz.types";
 import { get, post } from "@main/apis";
@@ -21,6 +21,10 @@ type GetQuizzQuestionsRequest = {
   competitionId: number;
   teamId: number;
 };
+
+type UpdateCompetitionRequest = {
+  competitionId: number;
+} & CreateRequest<QuizzRecord>;
 
 export const getQuizzList = createAsyncThunk(
   "quizz/fetch",
@@ -75,6 +79,36 @@ export const getQuizzQuestions = createAsyncThunk(
     try {
       return await get<QuizzResult[]>({
         path: `competition/${competitionId}/teams/${teamId}/questions`,
+      });
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const deleteQuizz = createAsyncThunk(
+  "quizz/delete",
+  async (competitionId: number, { rejectWithValue }) => {
+    try {
+      return await post({
+        path: `competition/${competitionId}/delete`,
+      });
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const updateQuizz = createAsyncThunk(
+  "quizz/update",
+  async (
+    { competitionId, ...restFields }: UpdateCompetitionRequest,
+    { rejectWithValue }
+  ) => {
+    try {
+      return await post({
+        path: `competition/${competitionId}/update`,
+        body: restFields,
       });
     } catch (e) {
       return rejectWithValue(e);

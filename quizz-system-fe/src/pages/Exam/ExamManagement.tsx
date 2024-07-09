@@ -135,7 +135,7 @@ const ExamManagement = () => {
         }}
       >
         <Dropdown>
-          <Dropdown.Toggle>
+          <Dropdown.Toggle disabled={isStarted}>
             {selectedTeam?.teamName ?? "Chọn đội thi"}
           </Dropdown.Toggle>
           <Dropdown.Menu>
@@ -179,13 +179,13 @@ const ExamManagement = () => {
                 {
                   name: "Đúng",
                   valueMapper: (record) => (
-                    <input type="radio" name={`q-${record["question.id"]}`} />
+                    <input type="radio" name={`q-${record.question.id}`} />
                   ),
                 },
                 {
                   name: "Sai",
                   valueMapper: (record) => (
-                    <input type="radio" name={`q-${record["question.id"]}`} />
+                    <input type="radio" name={`q-${record.question.id}`} />
                   ),
                 },
               ]}

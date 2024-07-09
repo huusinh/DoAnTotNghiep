@@ -89,10 +89,10 @@ namespace QuizzSystem.Controllers
             return Ok();
         }
 
-        [HttpPost("Delete")]
-        public IActionResult DeleteCompetition(int competitionID)
+        [HttpPost("{competitionId}/Delete")]
+        public IActionResult DeleteCompetition(int competitionId)
         {
-            _competitionRepository.Delete(competitionID);
+            _competitionRepository.Delete(competitionId);
 
             return Ok();
         }
@@ -128,7 +128,11 @@ namespace QuizzSystem.Controllers
         [HttpGet("{competitionId:int}")]
         public async Task<IActionResult> GetCompetitionById(int competitionId)
         {
-            var result = await _dbContext.Competitions.Include(e => e.CompetitionTeams).FirstOrDefaultAsync(e => e.Id == competitionId);
+            var result = await _dbContext.Competitions
+                                         .Include(e => e.CompetitionTeams)
+                                         .ThenInclude(e => e.Results)
+                                         .ThenInclude(e => e.Question)
+                                         .FirstOrDefaultAsync(e => e.Id == competitionId);
             if (result == null)
             {
                 return NotFound();

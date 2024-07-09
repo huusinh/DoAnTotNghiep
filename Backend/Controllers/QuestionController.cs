@@ -1,13 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizzSystem.Controllers.Abstraction;
 using QuizzSystem.Database;
 using QuizzSystem.Database.Repositories;
-using QuizzSystem.Models;
 using QuizzSystem.Requests.Question;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace QuizzSystem.Controllers
 {

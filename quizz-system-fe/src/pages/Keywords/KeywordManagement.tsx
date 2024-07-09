@@ -55,6 +55,7 @@ const KeywordManagement = () => {
               .then(unwrapResult)
               .then(() => {
                 dispatch(showMessageDialog("Đã xóa từ khóa thành công"));
+                dispatch(getKeywords());
               });
           },
         })

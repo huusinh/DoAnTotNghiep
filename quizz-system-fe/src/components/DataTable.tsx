@@ -7,19 +7,19 @@ import { ReactNode, SetStateAction, useMemo } from "react";
 import { Button } from "react-bootstrap";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 
-type DataTableCellFunc = (record: BaseRecord) => ReactNode;
+type DataTableCellFunc<TData extends BaseRecord> = (record: TData) => ReactNode;
 
-export type ColumnDefinition =
+export type ColumnDefinition<TData extends BaseRecord> =
   | string
   | {
       name: string;
-      valueMapper?: DataTableCellFunc;
+      valueMapper?: DataTableCellFunc<TData>;
     };
 
-export interface DataTableProps {
+export interface DataTableProps<TData extends BaseRecord> {
   tableTitle: string;
-  data: BaseRecord[] | PaginationResult<BaseRecord>;
-  columns?: ColumnDefinition[];
+  data: TData[] | PaginationResult<TData>;
+  columns?: ColumnDefinition<TData>[];
   additionalHeaderElement?: ReactNode;
   pageIndex?: number;
   setPageIndex?: React.Dispatch<SetStateAction<number>>;
@@ -30,12 +30,12 @@ export interface DataTableProps {
   enablePagination?: boolean;
 }
 
-interface DataTableCellProps {
-  record: BaseRecord;
-  column: ColumnDefinition;
+interface DataTableCellProps<TData extends BaseRecord> {
+  record: TData;
+  column: ColumnDefinition<TData>;
 }
 
-const DataTableCell = ({ record, column }: DataTableCellProps): ReactNode => {
+const DataTableCell = <TData extends BaseRecord>({ record, column }: DataTableCellProps<TData>): ReactNode => {
   if (typeof column === "string" && typeof record[column] === "object") {
     return null;
   }
@@ -47,7 +47,7 @@ const DataTableCell = ({ record, column }: DataTableCellProps): ReactNode => {
   return record[typeof column === "string" ? column : column["name"]] as string;
 };
 
-export const DataTable = ({
+export const DataTable = <TData extends BaseRecord>({
   data = InitialPaginationResult,
   tableTitle,
   columns,
@@ -56,7 +56,7 @@ export const DataTable = ({
   setPageIndex,
   onRowActionClick,
   enablePagination,
-}: DataTableProps) => {
+}: DataTableProps<TData>) => {
   const actualData = useMemo(() => {
     const isArray = Array.isArray(data)
 
@@ -117,6 +117,7 @@ export const DataTable = ({
                           justifyContent: "end",
                         }}
                         className="d-flex"
+                        key={`r${rowIndex}}`}
                       >
                         <Button
                           onClick={() => {
