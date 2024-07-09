@@ -8,7 +8,6 @@ import {
   selectQuizzData,
   setCurrentPage,
 } from "@main/features/slices/quizz.slice";
-import { QuizzRecord } from "@main/types/quizz.types";
 import { Link } from "react-router-dom";
 import { showMessageDialog } from "@main/features/slices/messages.slice";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -71,20 +70,20 @@ const QuizzManagement = () => {
               {
                 name: "Tên cuộc thi",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).competitionName,
+                  record.competitionName,
               },
               {
                 name: "Luật thi",
-                valueMapper: (record) => (record as QuizzRecord).contestRule,
+                valueMapper: (record) => record.contestRule,
               },
               {
                 name: "Số đội tối đa",
-                valueMapper: (record) => (record as QuizzRecord).maxTeamCount,
+                valueMapper: (record) => record.maxTeamCount,
               },
               {
                 name: "Số câu hỏi tối đa",
                 valueMapper: (record) =>
-                  (record as QuizzRecord).maxQuestionCount,
+                  record.maxQuestionCount,
               },
               {
                 name: "",

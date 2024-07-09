@@ -174,7 +174,7 @@ const ExamManagement = () => {
                 {
                   name: "Từ khoá",
                   valueMapper: (record) =>
-                    (record as QuizzResult).question.keyword,
+                    record.question.keyword,
                 },
                 {
                   name: "Đúng",
