@@ -109,15 +109,14 @@ export const AddQuizzPrompt = ({
       scrollable
       centered
       show={display}
-      fade
       onHide={closeModal}
       className="modal-form"
     >
-      <Modal.Header closeButton>
-        <Modal.Title>Add question</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
+      <Form onSubmit={onSubmitClick}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <Form.Group>
             <Form.Label>Tên cuộc thi</Form.Label>
             <Form.Control
@@ -294,13 +293,13 @@ export const AddQuizzPrompt = ({
               <span className="d-flex align-items-center">Giây</span>
             </div>
           </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button type="submit" variant="primary" onClick={onSubmitClick}>
-          Submit
-        </Button>
-      </Modal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Form>
     </Modal>
   );
 };

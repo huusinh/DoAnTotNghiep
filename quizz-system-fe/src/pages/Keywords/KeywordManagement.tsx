@@ -74,7 +74,7 @@ const KeywordManagement = () => {
                 Thêm từ khóa
               </button>
             }
-            columns={["keyword", "description"]}
+            columns={["keyword"]}
             pageIndex={pageIndex}
             setPageIndex={setPageIndex}
             onRowActionClick={onRowActionClick}

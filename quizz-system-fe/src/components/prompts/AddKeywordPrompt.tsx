@@ -1,5 +1,8 @@
 import { useAppDispatch } from "@main/features/hooks";
-import { createKeyword, getKeywords } from "@main/features/slices/keywords.slice";
+import {
+  createKeyword,
+  getKeywords,
+} from "@main/features/slices/keywords.slice";
 import { showMessageDialog } from "@main/features/slices/messages.slice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useState } from "react";
@@ -25,19 +28,19 @@ export const AddKeywordPrompt = ({
     )
       .then(unwrapResult)
       .then(() => {
-        dispatch(getKeywords())
+        dispatch(getKeywords());
         dispatch(showMessageDialog("Tạo từ khóa thành công"));
         closeModal();
       });
   };
 
   return (
-    <Modal centered show={display} onHide={closeModal} fade>
-      <Modal.Header closeButton>
-        <Modal.Title>Thêm từ khóa</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
+    <Modal centered show={display} onHide={closeModal}>
+      <Form onSubmit={onSubmitClick}>
+        <Modal.Header closeButton>
+          <Modal.Title>Thêm từ khóa</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <Form.Group>
             <Form.Label>Từ khóa</Form.Label>
             <Form.Control
@@ -47,13 +50,13 @@ export const AddKeywordPrompt = ({
               onChange={(e) => setKeyword(e.target.value)}
             />
           </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button type="submit" variant="primary" onClick={onSubmitClick}>
-          Submit
-        </Button>
-      </Modal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Form>
     </Modal>
   );
 };
