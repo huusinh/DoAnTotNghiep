@@ -26,6 +26,12 @@ type UpdateCompetitionRequest = {
   competitionId: number;
 } & CreateRequest<QuizzRecord>;
 
+type SubmitQuizzRequest = {
+  competitionId: number;
+  teamId: number;
+  result: Record<number, boolean | null>;
+};
+
 export const getQuizzList = createAsyncThunk(
   "quizz/fetch",
   async (_, { getState, rejectWithValue }) => {
@@ -109,6 +115,27 @@ export const updateQuizz = createAsyncThunk(
       return await post({
         path: `competition/${competitionId}/update`,
         body: restFields,
+      });
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const submitQuizz = createAsyncThunk(
+  "quizz/submit",
+  async (
+    { competitionId, teamId, result }: SubmitQuizzRequest,
+    { rejectWithValue }
+  ) => {
+    try {
+      return await post({
+        path: `competition/submit`,
+        body: {
+          competitionId,
+          teamId,
+          result,
+        },
       });
     } catch (e) {
       return rejectWithValue(e);

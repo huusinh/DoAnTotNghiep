@@ -78,6 +78,7 @@ namespace QuizzSystem.Controllers
 
             return Ok();
         }
+
         [HttpPost("{competitionID}/Update")]
         public async Task<IActionResult> UpdateCompetition([FromRoute] int competitionID, CreateCompetition request)
         {
@@ -97,8 +98,10 @@ namespace QuizzSystem.Controllers
             {
                 return NotFound();
             }
+
             await _dbContext.CompetitionTeams.Where(t => t.CompetitionId == competitionID)
                                                 .ExecuteDeleteAsync();
+
             foreach (var Team in request.TeamList)
             {
                 var team = new Models.CompetitionTeam
@@ -193,27 +196,43 @@ namespace QuizzSystem.Controllers
 
             return Ok(result);
         }
+
         [HttpPost("Submit")]
         public async Task<IActionResult> SubmitTeamResult(SaveResultRequest request)
         {
             try
             {
-                foreach(var item in request.ResultDic)
+                using var transaction = _dbContext.Database.BeginTransaction();
+                foreach(var item in request.Result)
                 {
                     var recordCount = await _dbContext.Results
-                                .Where(e => e.Id == item.Key && e.CompetitionTeamId == request.CompetitionTeamID)
+                                .Where(e => e.Id == item.Key && e.CompetitionTeamId == request.TeamId)
                                 .ExecuteUpdateAsync(setters =>
                                     setters
                                         .SetProperty(e => e.IsCorrect, item.Value ? 1 : 0));
+                    await _dbContext.CompetitionTeams.Where(e => e.Id == request.TeamId)
+                                .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.IsCompleted, true));
                     if (recordCount == 0)
                     {
                         return NotFound();
                     }
                 }
+
+                await _dbContext.Competitions
+                            .Where(e => e.Id == request.CompetitionId)
+                            .ExecuteUpdateAsync(setters =>
+                                setters.SetProperty(
+                                    e => e.IsCompleted,
+                                    _dbContext.CompetitionTeams
+                                                .Where(e => e.CompetitionId == request.CompetitionId)
+                                                .All(e => e.IsCompleted)
+                                )
+                            );
+                await transaction.CommitAsync();
                 TeamResultReponse teamResultReponse = new TeamResultReponse()
-                { 
-                    CorrectAnswerCount = request.ResultDic.Count(i => i.Value),
-                    TeamScore = request.ResultDic.Count(i => i.Value) * request.QuestionScore,
+                {
+                    CorrectAnswerCount = request.Result.Count(i => i.Value),
+                    TeamScore = request.Result.Count(i => i.Value) * request.QuestionScore,
                 };
                 return Ok(teamResultReponse);
             }

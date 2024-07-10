@@ -4,8 +4,9 @@ namespace QuizzSystem.Requests.Competition
 {
     public class SaveResultRequest
     {
+        public int CompetitionId { get; set; }
         public int QuestionScore { get; set; }
-        public int CompetitionTeamID { get; set; }
-        public Dictionary<int,bool> ResultDic { get; set; } = new Dictionary<int,bool>();
+        public int TeamId { get; set; }
+        public Dictionary<int,bool> Result { get; set; } = new Dictionary<int,bool>();
     }
 }
