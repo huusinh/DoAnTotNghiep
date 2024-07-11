@@ -230,15 +230,26 @@ namespace QuizzSystem.Controllers
                                                 .All(e => e.IsCompleted)
                                 )
                             );
-                await transaction.CommitAsync();
                 TeamResultReponse teamResultReponse = new TeamResultReponse()
                 {
                     CorrectAnswerCount = request.Result.Count(i => i.Value),
                     TeamScore = request.Result.Count(i => i.Value) * request.QuestionScore,
                 };
-                await _dbContext.CompetitionTeams.Where(t => t.Id == request.TeamId)
-                                            .ExecuteUpdateAsync(setters =>
-                                            setters.SetProperty(e => e.CorrectAnswerCount, request.Result.Count(i => i.Value)));
+
+                var correctAnswerCount = request.Result.Count(i => i.Value);
+
+                await _dbContext.CompetitionTeams
+                            .Where(t => t.Id == request.TeamId)
+                            .ExecuteUpdateAsync(
+                                setters =>
+                                    setters.SetProperty(
+                                        e => e.CorrectAnswerCount,
+                                        correctAnswerCount
+                                    )
+                            );
+
+                await transaction.CommitAsync();
+
                 return Ok(teamResultReponse);
             }
             catch

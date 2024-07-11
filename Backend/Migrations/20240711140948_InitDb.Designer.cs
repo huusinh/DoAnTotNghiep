@@ -12,8 +12,8 @@ using QuizzSystem.Database;
 namespace QuizzSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240707092617_AddUserInfo")]
-    partial class AddUserInfo
+    [Migration("20240711140948_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -247,39 +247,16 @@ namespace QuizzSystem.Migrations
                     b.Property<string>("CompetitionName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompetitionSettingId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CreatorId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsSoftDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompetitionSettingId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Competitions");
-                });
-
-            modelBuilder.Entity("QuizzSystem.Models.CompetitionSetting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("ContestRule")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ContestTime")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("IsDefault")
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSoftDeleted")
@@ -296,7 +273,9 @@ namespace QuizzSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CompetitionSettings");
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Competitions");
                 });
 
             modelBuilder.Entity("QuizzSystem.Models.CompetitionTeam", b =>
@@ -309,6 +288,12 @@ namespace QuizzSystem.Migrations
 
                     b.Property<int?>("CompetitionId")
                         .HasColumnType("int");
+
+                    b.Property<int>("CorrectAnswerCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSoftDeleted")
                         .HasColumnType("bit");
@@ -330,9 +315,6 @@ namespace QuizzSystem.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsSoftDeleted")
                         .HasColumnType("bit");
@@ -428,15 +410,9 @@ namespace QuizzSystem.Migrations
 
             modelBuilder.Entity("QuizzSystem.Models.Competition", b =>
                 {
-                    b.HasOne("QuizzSystem.Models.CompetitionSetting", "CompetitionSetting")
-                        .WithMany()
-                        .HasForeignKey("CompetitionSettingId");
-
                     b.HasOne("QuizzSystem.Models.AppUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId");
-
-                    b.Navigation("CompetitionSetting");
 
                     b.Navigation("Creator");
                 });
@@ -454,7 +430,8 @@ namespace QuizzSystem.Migrations
                 {
                     b.HasOne("QuizzSystem.Models.CompetitionTeam", "CompetitionTeam")
                         .WithMany("Results")
-                        .HasForeignKey("CompetitionTeamId");
+                        .HasForeignKey("CompetitionTeamId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("QuizzSystem.Models.Question", "Question")
                         .WithMany("Results")

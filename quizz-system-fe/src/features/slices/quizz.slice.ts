@@ -6,13 +6,11 @@ import { RootState } from "../store";
 
 type InitialState = {
   quizz: PaginationResult<QuizzRecord>;
-  quizzHistories: PaginationResult<QuizzRecord>
   currentPage: number;
 };
 
 const initialState: InitialState = {
   quizz: InitialPaginationResult,
-  quizzHistories: InitialPaginationResult,
   currentPage: 1,
 };
 
@@ -142,25 +140,6 @@ export const submitQuizz = createAsyncThunk(
   }
 );
 
-export const getHistory = createAsyncThunk(
-  "competition/histories",
-  async (
-    pageIndex: number,
-    { rejectWithValue }
-  ) => {
-    try {
-      return await get<PaginationResult<QuizzRecord>>({
-        path: `competition/histories`,
-        query: {
-          pageIndex
-        }
-      });
-    } catch (e) {
-      return rejectWithValue(e);
-    }
-  }
-);
-
 const quizzSlice = createSlice({
   name: "quizz",
   initialState,
@@ -173,13 +152,9 @@ const quizzSlice = createSlice({
     builder.addCase(getQuizzList.fulfilled, (state, { payload }) => {
       state.quizz = payload;
     });
-    builder.addCase(getHistory.fulfilled, (state, { payload }) => {
-      state.quizzHistories = payload;
-    });
   },
 });
 
 export const quizzReducer = quizzSlice.reducer;
 export const { setCurrentPage } = quizzSlice.actions;
 export const selectQuizzData = (state: RootState) => state.quizz.quizz;
-export const selectQuizzHistories = (state: RootState) => state.quizz.quizzHistories

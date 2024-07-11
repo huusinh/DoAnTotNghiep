@@ -49,9 +49,10 @@ export const UpdateQuizzPrompt = ({
   const internalCloseModal = () => {
     setName("");
     setMaxTeams("1");
+    setContestRule("");
     setMaxQuestions("0");
-    setMinute("")
-    setSecond("")
+    setMinute("");
+    setSecond("");
     setTeamName([""]);
     setTeamKeywords([[]]);
     setSelectedKeywords(new Set<number>())
@@ -63,9 +64,14 @@ export const UpdateQuizzPrompt = ({
 
     const teamList: Record<string, number[]> = {};
 
-    console.log(teamKeywords)
+    let keywordsCount = teamKeywords[0].length
 
     for (let i = 0; i < teamName.length; i++) {
+      if (keywordsCount !== teamKeywords[i].length) {
+        dispatch(showMessageDialog('Số câu hỏi của các đội phải bằng nhau'))
+        return
+      }
+      keywordsCount = teamKeywords[i].length
       teamList[`${teamName[i]}`] = teamKeywords[i];
     }
 
@@ -136,7 +142,6 @@ export const UpdateQuizzPrompt = ({
       dispatch(getQuizzDetail(edittingQuizzId))
         .then(unwrapResult)
         .then((data) => {
-          console.log(data);
           setName(data.competitionName);
           setContestRule(data.contestRule);
           setMaxTeams(data.maxTeamCount.toString());
@@ -175,7 +180,7 @@ export const UpdateQuizzPrompt = ({
       className="modal-form"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Add question</Modal.Title>
+        <Modal.Title>Cập nhật cuộc thi</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form id="update-quizz-form" onSubmit={onSubmitClick}>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QuizzSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitCreate : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,7 @@ namespace QuizzSystem.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsSoftDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -60,7 +61,6 @@ namespace QuizzSystem.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Keyword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsSoftDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -183,7 +183,6 @@ namespace QuizzSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CompetitionName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatorId = table.Column<int>(type: "int", nullable: true),
-                    CompetitionSettingId = table.Column<int>(type: "int", nullable: true),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
                     QuestionScore = table.Column<int>(type: "int", nullable: true),
                     ContestTime = table.Column<int>(type: "int", nullable: true),
@@ -210,6 +209,8 @@ namespace QuizzSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TeamName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompetitionId = table.Column<int>(type: "int", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    CorrectAnswerCount = table.Column<int>(type: "int", nullable: false),
                     IsSoftDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -240,7 +241,8 @@ namespace QuizzSystem.Migrations
                         name: "FK_Results_CompetitionTeams_CompetitionTeamId",
                         column: x => x.CompetitionTeamId,
                         principalTable: "CompetitionTeams",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Results_Questions_QuestionId",
                         column: x => x.QuestionId,

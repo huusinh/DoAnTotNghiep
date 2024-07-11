@@ -13,9 +13,10 @@ public partial class CompetitionTeam : BaseEntity<int>
 
     public bool IsCompleted { get; set; }
 
+    public int CorrectAnswerCount { get; set; }
+
     [JsonIgnore]
     public virtual Competition? Competition { get; set; }
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
-    public int CorrectAnswerCount { get; set; }
 }

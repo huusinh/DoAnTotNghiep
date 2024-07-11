@@ -39,6 +39,7 @@ export const AddQuizzPrompt = ({
   const internalCloseModal = () => {
     setName("");
     setMaxTeams("1");
+    setContestRule("");
     setMaxQuestions("0");
     setMinute("")
     setSecond("")
@@ -53,7 +54,14 @@ export const AddQuizzPrompt = ({
 
     const teamList: Record<string, number[]> = {};
 
+    let keywordsCount = teamKeywords[0].length
+
     for (let i = 0; i < teamName.length; i++) {
+      if (keywordsCount !== teamKeywords[i].length) {
+        dispatch(showMessageDialog('Số câu hỏi của các đội phải bằng nhau'))
+        return
+      }
+      keywordsCount = teamKeywords[i].length
       teamList[`${teamName[i]}`] = teamKeywords[i];
     }
 
@@ -120,7 +128,7 @@ export const AddQuizzPrompt = ({
       className="modal-form"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Add question</Modal.Title>
+        <Modal.Title>Thêm cuộc thi</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form id="add-quizz-form" onSubmit={onSubmitClick}>
@@ -162,8 +170,8 @@ export const AddQuizzPrompt = ({
                         { length: newMaxTeams - maxTeamsNumber },
                         () => [] as number[]
                       );
-                      setTeamName([...teamName, ...newTeamName]);
-                      setTeamKeywords([...teamKeywords, ...newTeamKeywords]);
+                      setTeamName([...newTeamName]);
+                      setTeamKeywords([...newTeamKeywords]);
                     } else {
                       setTeamName(teamName.slice(0, newMaxTeams));
                       setTeamKeywords(teamKeywords.slice(0, newMaxTeams));

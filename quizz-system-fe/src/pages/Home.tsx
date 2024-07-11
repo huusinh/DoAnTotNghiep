@@ -1,19 +1,26 @@
 import { DataTable } from "@main/components/DataTable";
-import { useAppDispatch, useAppSelector } from "@main/features/hooks";
-import {
-  getHistory,
-  selectQuizzHistories,
-} from "@main/features/slices/quizz.slice";
+import { useAppDispatch } from "@main/features/hooks";
+import { getDashboardData } from "@main/features/slices/dashboard.slice";
+import { HistoryRecord } from "@main/types/dashboard.types";
+import { InitialPaginationResult, PaginationResult } from "@main/types/integration.types";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const [pageIndex, setPageIndex] = useState(1);
-  const quizzHistories = useAppSelector(selectQuizzHistories);
+  const [keywordsCount, setKeywordsCount] = useState(0)
+  const [competitionCount, setcompetitionCount] = useState(0)
+  const [histories, setHistories] = useState<PaginationResult<HistoryRecord>>(InitialPaginationResult)
 
   useEffect(() => {
-    dispatch(getHistory(pageIndex)).then(unwrapResult);
+    dispatch(getDashboardData(pageIndex))
+      .then(unwrapResult)
+      .then((data) => {
+        setKeywordsCount(data.keywordsCount)
+        setcompetitionCount(data.competitionsCount)
+        setHistories(data.histories)
+      });
   }, [pageIndex, dispatch]);
 
   return (
@@ -28,7 +35,7 @@ const Home = () => {
                     <h3>Tổng số cuộc thi</h3>
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    <h3>1</h3>
+                    <h3>{competitionCount}</h3>
                   </div>
                 </div>
               </div>
@@ -45,7 +52,7 @@ const Home = () => {
                     <h3>Tổng số từ khóa</h3>
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    <h3>10</h3>
+                    <h3>{keywordsCount}</h3>
                   </div>
                 </div>
                 <div className="col-auto"></div>
@@ -58,7 +65,7 @@ const Home = () => {
       <div className="row">
         <div className="col-lg-12 mb-4">
           <DataTable
-            data={quizzHistories}
+            data={histories}
             columns={[
               {
                 name: "Tên cuộc thi",
@@ -66,18 +73,18 @@ const Home = () => {
               },
               {
                 name: "Tên đội",
-                valueMapper: (record) => 0,
+                valueMapper: (record) => record.teamName,
               },
               {
                 name: "Số câu đúng",
-                valueMapper: (record) => record.competitionRule,
+                valueMapper: (record) => record.correctAnswerCount,
               },
               {
                 name: "Số câu sai",
-                valueMapper: (record) => record.competitionName,
+                valueMapper: (record) => record.failedAnswerCount,
               },
             ]}
-            tableTitle="Danh sách cuộc thi"
+            tableTitle="Lịch sử thi"
             pageIndex={pageIndex}
             setPageIndex={setPageIndex}
             enablePagination
