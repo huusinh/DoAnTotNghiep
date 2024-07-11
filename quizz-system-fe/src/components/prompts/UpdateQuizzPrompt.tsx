@@ -46,10 +46,24 @@ export const UpdateQuizzPrompt = ({
     new Set<number>()
   );
 
+  const internalCloseModal = () => {
+    setName("");
+    setMaxTeams("1");
+    setMaxQuestions("0");
+    setMinute("")
+    setSecond("")
+    setTeamName([""]);
+    setTeamKeywords([[]]);
+    setSelectedKeywords(new Set<number>())
+    closeModal();
+  }
+
   const onSubmitClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const teamList: Record<string, number[]> = {};
+
+    console.log(teamKeywords)
 
     for (let i = 0; i < teamName.length; i++) {
       teamList[`${teamName[i]}`] = teamKeywords[i];
@@ -70,7 +84,7 @@ export const UpdateQuizzPrompt = ({
       .then(unwrapResult)
       .then(() => {
         dispatch(getQuizzList());
-        closeModal();
+        internalCloseModal();
       });
   };
 
@@ -131,6 +145,7 @@ export const UpdateQuizzPrompt = ({
           const teamKeywords = [] as number[][];
           const keywordsSet = new Set<number>();
 
+
           for (const team of data.competitionTeams!) {
             const keywords = team.results.map((e) => e.question.id);
             for (const keyword of keywords) {
@@ -140,7 +155,7 @@ export const UpdateQuizzPrompt = ({
           }
 
           setTeamKeywords(
-            data.competitionTeams!.map((e) => [...e.results.map((e) => e.id)])
+            teamKeywords
           );
           setSelectedKeywords(keywordsSet);
 
@@ -156,7 +171,7 @@ export const UpdateQuizzPrompt = ({
       scrollable
       centered
       show={display}
-      onHide={closeModal}
+      onHide={internalCloseModal}
       className="modal-form"
     >
       <Modal.Header closeButton>

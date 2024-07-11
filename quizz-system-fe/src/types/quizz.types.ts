@@ -13,7 +13,8 @@ export interface QuizzRecord extends BaseRecord {
 
 export type CompetitionTeam = BaseRecord & {
   teamName: string;
-  results: QuizzResult[]
+  results: QuizzResult[],
+  isCompleted: boolean
 };
 
 export type CreateQuizz = {

@@ -58,21 +58,6 @@ const SignIn = () => {
                         onChange={e => setPassword(e.target.value)}
                       />
                     </div>
-                    <div className="form-group">
-                      <div className="custom-control custom-checkbox small">
-                        <input
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="customCheck"
-                        />
-                        <label
-                          className="custom-control-label"
-                          htmlFor="customCheck"
-                        >
-                          Remember Me
-                        </label>
-                      </div>
-                    </div>
                     <Button
                       variant="primary"
                       type="submit"

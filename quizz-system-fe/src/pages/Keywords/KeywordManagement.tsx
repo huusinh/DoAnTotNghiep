@@ -75,7 +75,11 @@ const KeywordManagement = () => {
                 Thêm từ khóa
               </button>
             }
-            columns={["keyword"]}
+            columns={[{
+              name: "Từ Khoá",
+                valueMapper: (record) =>
+                  record.keyword,
+            }]}
             pageIndex={pageIndex}
             setPageIndex={setPageIndex}
             onRowActionClick={onRowActionClick}

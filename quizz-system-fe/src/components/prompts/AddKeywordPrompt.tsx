@@ -20,6 +20,11 @@ export const AddKeywordPrompt = ({
   const dispatch = useAppDispatch();
   const [keyword, setKeyword] = useState("");
 
+  const internalCloseModal = () => {
+    setKeyword("")
+    closeModal();
+  }
+
   const onSubmitClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -32,12 +37,12 @@ export const AddKeywordPrompt = ({
       .then(() => {
         dispatch(getKeywords());
         dispatch(showMessageDialog("Tạo từ khóa thành công"));
-        closeModal();
+        internalCloseModal()
       });
   };
 
   return (
-    <Modal centered show={display} onHide={closeModal}>
+    <Modal centered show={display} onHide={internalCloseModal}>
       <Form onSubmit={onSubmitClick}>
         <Modal.Header closeButton>
           <Modal.Title>Thêm từ khóa</Modal.Title>

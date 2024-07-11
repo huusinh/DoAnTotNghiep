@@ -11,6 +11,8 @@ public partial class CompetitionTeam : BaseEntity<int>
 
     public int? CompetitionId { get; set; }
 
+    public bool IsCompleted { get; set; }
+
     [JsonIgnore]
     public virtual Competition? Competition { get; set; }
 

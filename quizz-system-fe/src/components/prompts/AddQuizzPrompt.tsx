@@ -36,8 +36,20 @@ export const AddQuizzPrompt = ({
     new Set<number>()
   );
 
+  const internalCloseModal = () => {
+    setName("");
+    setMaxTeams("1");
+    setMaxQuestions("0");
+    setMinute("")
+    setSecond("")
+    setTeamName([""]);
+    setTeamKeywords([[]]);
+    setSelectedKeywords(new Set<number>())
+    closeModal();
+  }
+
   const onSubmitClick = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const teamList: Record<string, number[]> = {};
 
@@ -59,7 +71,7 @@ export const AddQuizzPrompt = ({
       .then(unwrapResult)
       .then(() => {
         dispatch(getQuizzList());
-        closeModal();
+        internalCloseModal();
       });
   };
 
@@ -97,13 +109,6 @@ export const AddQuizzPrompt = ({
 
   useEffect(() => {
     dispatch(getKeywordsSelect());
-
-    return () => {
-      setName("");
-      setMaxTeams("1");
-      setMaxQuestions("0");
-      setTeamName([""]);
-    };
   }, [dispatch]);
 
   return (
@@ -111,7 +116,7 @@ export const AddQuizzPrompt = ({
       scrollable
       centered
       show={display}
-      onHide={closeModal}
+      onHide={internalCloseModal}
       className="modal-form"
     >
       <Modal.Header closeButton>

@@ -1,4 +1,4 @@
-import { CreateRequest, PaginationResult } from "@main/types/integration.types";
+import { CreateRequest, InitialPaginationResult, PaginationResult } from "@main/types/integration.types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CreateQuizz, QuizzRecord, QuizzResult } from "@main/types/quizz.types";
 import { get, post } from "@main/apis";
@@ -6,14 +6,13 @@ import { RootState } from "../store";
 
 type InitialState = {
   quizz: PaginationResult<QuizzRecord>;
+  quizzHistories: PaginationResult<QuizzRecord>
   currentPage: number;
 };
 
 const initialState: InitialState = {
-  quizz: {
-    results: [],
-    totalItems: 0,
-  },
+  quizz: InitialPaginationResult,
+  quizzHistories: InitialPaginationResult,
   currentPage: 1,
 };
 
@@ -25,6 +24,12 @@ type GetQuizzQuestionsRequest = {
 type UpdateCompetitionRequest = {
   competitionId: number;
 } & CreateRequest<QuizzRecord>;
+
+type SubmitQuizzRequest = {
+  competitionId: number;
+  teamId: number;
+  result: Record<number, boolean | null>;
+};
 
 export const getQuizzList = createAsyncThunk(
   "quizz/fetch",
@@ -116,6 +121,46 @@ export const updateQuizz = createAsyncThunk(
   }
 );
 
+export const submitQuizz = createAsyncThunk(
+  "quizz/submit",
+  async (
+    { competitionId, teamId, result }: SubmitQuizzRequest,
+    { rejectWithValue }
+  ) => {
+    try {
+      return await post({
+        path: `competition/submit`,
+        body: {
+          competitionId,
+          teamId,
+          result,
+        },
+      });
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const getHistory = createAsyncThunk(
+  "competition/histories",
+  async (
+    pageIndex: number,
+    { rejectWithValue }
+  ) => {
+    try {
+      return await get<PaginationResult<QuizzRecord>>({
+        path: `competition/histories`,
+        query: {
+          pageIndex
+        }
+      });
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
 const quizzSlice = createSlice({
   name: "quizz",
   initialState,
@@ -128,9 +173,13 @@ const quizzSlice = createSlice({
     builder.addCase(getQuizzList.fulfilled, (state, { payload }) => {
       state.quizz = payload;
     });
+    builder.addCase(getHistory.fulfilled, (state, { payload }) => {
+      state.quizzHistories = payload;
+    });
   },
 });
 
 export const quizzReducer = quizzSlice.reducer;
 export const { setCurrentPage } = quizzSlice.actions;
 export const selectQuizzData = (state: RootState) => state.quizz.quizz;
+export const selectQuizzHistories = (state: RootState) => state.quizz.quizzHistories

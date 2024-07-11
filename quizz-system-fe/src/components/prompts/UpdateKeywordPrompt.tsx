@@ -23,6 +23,11 @@ export const UpdateKeywordPrompt = ({
   const dispatch = useAppDispatch();
   const [keyword, setKeyword] = useState("");
 
+  const internalCloseModal = () => {
+    setKeyword("")
+    closeModal();
+  }
+
   useEffect(() => {
     if (edittingKeywordId) {
       dispatch(getKeywordById(edittingKeywordId))
@@ -31,10 +36,6 @@ export const UpdateKeywordPrompt = ({
           setKeyword(keyword);
         });
     }
-
-    return () => {
-      setKeyword("");
-    };
   }, [edittingKeywordId, dispatch]);
 
   const onSubmitClick = (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,12 +51,12 @@ export const UpdateKeywordPrompt = ({
       .then(() => {
         dispatch(getKeywords());
         dispatch(showMessageDialog("Chỉnh sửa từ khóa thành công"));
-        closeModal();
+        internalCloseModal();
       });
   };
 
   return (
-    <Modal centered show={display} onHide={closeModal}>
+    <Modal centered show={display} onHide={internalCloseModal}>
       <Form onSubmit={onSubmitClick}>
         <Modal.Header closeButton>
           <Modal.Title>Chỉnh sửa từ khóa</Modal.Title>
