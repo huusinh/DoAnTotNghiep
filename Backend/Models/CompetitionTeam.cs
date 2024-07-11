@@ -17,4 +17,5 @@ public partial class CompetitionTeam : BaseEntity<int>
     public virtual Competition? Competition { get; set; }
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
+    public int CorrectAnswerCount { get; set; }
 }

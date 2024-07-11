@@ -286,6 +286,9 @@ namespace QuizzSystem.Migrations
                     b.Property<int?>("CompetitionId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CorrectAnswerCount")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
