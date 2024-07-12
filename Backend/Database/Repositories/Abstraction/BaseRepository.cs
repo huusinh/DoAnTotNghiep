@@ -33,7 +33,7 @@ namespace QuizzSystem.Database.Repositories.Abstraction
         {
             var list = await DbSet.ToListAsync(cancellationToken);
             var total = list.Count;
-            return new Pagination<TEntity>(list, total, pageIndex);
+            return new Pagination<TEntity>(list, total, pageIndex, applyPageAndLimitToResults: true);
         }
 
         public Task<List<TEntity>> FilterAsync(

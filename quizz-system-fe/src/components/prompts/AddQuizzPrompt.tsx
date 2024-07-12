@@ -162,16 +162,21 @@ export const AddQuizzPrompt = ({
                     const maxTeamsNumber = Number(maxTeams) ?? 0;
 
                     if (newMaxTeams > maxTeamsNumber) {
-                      const newTeamName = Array.from(
-                        { length: newMaxTeams - maxTeamsNumber },
-                        () => ""
-                      );
-                      const newTeamKeywords = Array.from(
-                        { length: newMaxTeams - maxTeamsNumber },
-                        () => [] as number[]
-                      );
-                      setTeamName([...newTeamName]);
-                      setTeamKeywords([...newTeamKeywords]);
+                      const teamNameResult = [] as string[]
+                      const teamKeywordResult = [] as number[][]
+                      
+                      for (let i = 0; i < newMaxTeams; i++) {
+                        if (teamName[i]) {
+                          teamNameResult.push(teamName[i])
+                          teamKeywordResult.push(teamKeywords[i])
+                        } else {
+                          teamNameResult.push('')
+                          teamKeywordResult.push([])
+                        }
+                      }
+
+                      setTeamName([...teamNameResult]);
+                      setTeamKeywords([...teamKeywordResult]);
                     } else {
                       setTeamName(teamName.slice(0, newMaxTeams));
                       setTeamKeywords(teamKeywords.slice(0, newMaxTeams));

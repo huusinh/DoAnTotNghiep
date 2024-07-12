@@ -20,8 +20,8 @@ const KeywordManagement = () => {
   const [edittingKeywordId, setEdittingKeywordId] = useState<number>();
 
   const fetchData = useCallback(() => {
-    dispatch(getKeywords());
     dispatch(setCurrentPage(pageIndex));
+    dispatch(getKeywords());
   }, [pageIndex, dispatch]);
 
   useEffect(() => {

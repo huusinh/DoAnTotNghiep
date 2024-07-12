@@ -214,16 +214,21 @@ export const UpdateQuizzPrompt = ({
                     const maxTeamsNumber = Number(maxTeams) ?? 0;
 
                     if (newMaxTeams > maxTeamsNumber) {
-                      const newTeamName = Array.from(
-                        { length: newMaxTeams - maxTeamsNumber },
-                        () => ""
-                      );
-                      const newTeamKeywords = Array.from(
-                        { length: newMaxTeams - maxTeamsNumber },
-                        () => [] as number[]
-                      );
-                      setTeamName([...teamName, ...newTeamName]);
-                      setTeamKeywords([...teamKeywords, ...newTeamKeywords]);
+                      const newTeamName = [] as string[]
+                      const newTeamKeyword = [] as number[][]
+                      
+                      for (let i = 0; i < newMaxTeams; i++) {
+                        if (teamName[i]) {
+                          newTeamName.push(teamName[i])
+                          newTeamKeyword.push(teamKeywords[i])
+                        } else {
+                          newTeamName.push('')
+                          newTeamKeyword.push([])
+                        }
+                      }
+
+                      setTeamName([...newTeamName]);
+                      setTeamKeywords([...newTeamKeyword]);
                     } else {
                       setTeamName(teamName.slice(0, newMaxTeams));
                       setTeamKeywords(teamKeywords.slice(0, newMaxTeams));
